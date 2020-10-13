@@ -39,6 +39,7 @@ A tsv including all the sequences and labels is provided in `./data/all_sequence
  - 6706 Random sequences
 
 An example file is viewable [here](./data/example_training_data.tsv)
+(Note values the `Identifier_Type` column are described [here](https://en.wikipedia.org/wiki/FASTA_format#NCBI_identifiers).
 
 ### Training/Algorithms
 
@@ -49,7 +50,10 @@ An example file is viewable [here](./data/example_training_data.tsv)
 ### Commands and Running
 This program used python to train the machine learning model for the cost function and implements the genetic algorithm in golang.
 The likelihood that a sequence is a DNAzyme is produced by calling `./src/dnazyme_ML_model/evaluate_sequence.py $MODEL_FILE $SEQ` where `$MODEL_FILE` contains the machine learning model parameters.
-Running the program will be as follows `./src/genetic_algorithm/genetic_algorithm $target.fasta $output_file $num_gens $mutation_rate $population_size $model_file`  `$output_format`
+Running the program will be as follows
+
+`./src/genetic_algorithm/genetic_algorithm $target.fasta $output_file $num_gens $mutation_rate $population_size $model_file $output_format`
+
 The parameters are
  - `$target.fasta` fasta file with 1 entry containg the sequence you want a DNAzyme to target
  - `$output_file` csv file containing a population of solutions with sequence info in the header
