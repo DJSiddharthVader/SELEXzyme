@@ -1,0 +1,9 @@
+GI	Identifier_Type	Identifier_Value	Sequence	Label	Label_Binary	Description
+551461007	DBJ	DI203508.1	AGGGACGGGAAGAAATACAT...	DNAzyme	DNAzyme	KR 1020120021470-A/11: Method for Detecting Nucleic Acid Using DNAzyme Having Peroxidase Activity
+551461006	DBJ	DI203507.1	ATGCACTTTCTACAAGAGAA...	DNAzyme	DNAzyme	 KR 1020120021470-A/10: Method for Detecting Nucleic Acid Using DNAzyme Having Peroxidase Activity
+1760676726	GB	MO159759.1	TCCCTACGGCGCTAACTGAT...	Aptamer	Not_DNAzyme	 Sequence 30 from patent US 10329570
+1760676724	GB	MO159758.1	TCCCTACGGCGCTAACTATT...	Aptamer	Not_DNAzyme	 Sequence 29 from patent US 10329570
+311551411	EMB	HI180365.1	GTACTTCATACTTTTCATTC...	Promoter	Not_DNAzyme	 Sequence 7 from Patent EP1988926
+311551407	EMB	HI180361.1	GCTAGCCTCCAGAAGCAAAG...	Promoter	Not_DNAzyme	 Sequence 3 from Patent EP1988926
+RSID_4880	RSID	RSID_4880	TGAATATCTTCTTACTTTAC...	Random	Not_DNAzyme	Random Sequence 4880
+RSID_4881	RSID	RSID_4881	CTGCCATTATGGCAAGTGTT...	Random	Not_DNAzyme	Random Sequence 4881

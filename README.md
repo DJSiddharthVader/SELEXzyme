@@ -31,12 +31,14 @@ Data is required for training the machine learning model to asses how likely a g
 There are relatively few known DNAzyme sequence so we also want to include negative examples, which include random DNA sequences and aptamer like sequences that can bind proteins but have no catalytic activity.
 Known DNAzymes, DNA APtamers and promoters were downloaded from the [NCBI Nucleotide](https://www.ncbi.nlm.nih.gov/nuccore/), by searching for "DNAzyme","Aptamer" and "promoter" respectively and filtering for "genomic DNA/RNA".
 Promoters were constrained to be between 50-250 base pairs long to trim the results and more closely resemble Aptamers and DNAzymes
-Random sequences between 1-300bp were also generated as negative training examples.
-A csv including all the sequences and labels is provided in `./data/all_sequences.csv`, which contains
+Random sequences between 50-300bp were also generated as negative training examples.
+A tsv including all the sequences and labels is provided in `./data/all_sequences.csv`, which contains
  - 9999 Aptamers
  - 5581 DNAzymes
  - 4537 Promoters
- - 6705 Random sequences
+ - 6706 Random sequences
+
+An example file is viewable [here](./data/example_training_data.tsv)
 
 ### Training/Algorithms
 
