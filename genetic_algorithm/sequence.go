@@ -5,12 +5,10 @@ import(
     "math/rand"
 )
 */
-
 type Sequence struct {
     seq string
     fitness float64
 }
-
 /*
 // Crossover() creates a new sequence by crossing over with some input sequence at a random locus and rescores the new sequence
 // input: sequence to crossover with
@@ -18,7 +16,6 @@ type Sequence struct {
 func (s Sequence) Crossover(partner Sequence) Sequence {
     return partner
 }
-
 // Mutate() creates a new sequence by crossing over with some input sequence at a given rate
 // input: probability that each site will be mutated
 // output: sequence with mutations
