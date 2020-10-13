@@ -55,16 +55,16 @@ func (s Sequence) Complementarity(target Sequence) float64{
     fmt.Println(err)
     return float64(len(s.seq)+len(target.seq))
 }
-/*
+
 // MeltingTemperature() get the melting temperature of the sequence, returns abs difference to target
 // output: float64
-func (s Sequence) MeltingTemperature(targetTemp float64) float64{
+func (s Sequence) MeltingTemperature(targetTemp float64) float64 {
     return float64(len(s.seq))
 }
-// Score() asseses the total fitness of a sequence
+// ScoreFitness() asseses the total fitness of a sequence
 // output: no output, just updates the fitness score
-func (s Sequence) Score(target string) Sequence {
+func (s Sequence) ScoreFitness() {
     var t Sequence
-    t.fitness = float64(len(s.seq)+len(target))
+    t.fitness = float64(len(s.seq))
 }
-*/
+
