@@ -48,3 +48,11 @@ func InitializeGeneration(size,lower,upper int) []Sequence {
     }
     return population
 }
+
+type Population []Sequence
+/*
+// SelectMembersForBreeding() select the best members from the current population for breeding the next generation
+// BreedNewGeneration() create a new population from previous best members and breeding new members from them
+// BreedUntilFinished() keep breeding new generations until average fitness plateaus or a specific number of generations has passed
+// WriteToFile() write every member of the population into a file, either tsv or fasta
+*/
