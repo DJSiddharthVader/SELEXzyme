@@ -1,0 +1,50 @@
+package main
+
+import(
+    "math/rand"
+)
+
+// RandomIntBetween() returns a random in between 2 other ints
+// input: lower and upper bounds
+// output: random int between lower and upper
+// from https://flaviocopes.com/go-random/
+func RandomIntBetween(lower,upper int) int {
+    if lower >= upper {
+        panic("lower must be strictly smaller than upper")
+    }
+    return lower + rand.Intn(upper-lower)
+}
+// MakeRandomSeq() returns a random DNA string of the given length
+// input: int length of the sequence
+// output: string DNA sequence
+func MakeRandomSeq(length int) string {
+    var seq string
+    var DNA_ALPHABET = []string{"A","G","C","T"}
+    for i := 0; i < length; i++ {
+        seq = seq + DNA_ALPHABET[rand.Intn(len(DNA_ALPHABET))] // pick a random element from the alphabet
+    }
+    return seq
+}
+// MakeRandomSequence() returns a random Sequence Object with a seq of the given length
+// input: length of the sequence
+// output: Sequence object
+func MakeRandomSequence(length int) Sequence {
+    var s Sequence
+    s.seq = MakeRandomSeq(length)
+    s.ScoreFitness()
+    return s
+}
+// RandomIntBetween() returns a random in between 2 other ints
+// input: lower and upper bounds
+// output: random int between lower and upper
+func InitializeGeneration(size,lower,upper int) []Sequence {
+    population := make([]Sequence,size)
+    var length int
+    var member Sequence
+    for i := 0; i < size; i++ {
+        length = RandomIntBetween(lower,upper)
+        member = MakeRandomSequence(length)
+        population = append(population,member)
+    }
+    return population
+}
