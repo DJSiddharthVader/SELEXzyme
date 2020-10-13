@@ -1,0 +1,49 @@
+%Preamble
+\documentclass[11pt]{article}
+%packages
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{float}
+\usepackage[section]{placeins} %for FloatBarrier
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor,soul}
+\definecolor{linkcolor}{HTML}{0066ff}
+\newcommand{\link}[2]{\href{#1}{\color{linkcolor}\setulcolor{linkcolor}\ul{\mbox{#2}}}}
+
+\begin{document}
+
+\title{02-601: Project Proposal: SELEX for DNAzymes}
+\author{Siddharth Reed, slreed}
+\date{\today}
+\maketitle
+
+\paragraph{\textbf{Problem}}
+The problem is that given some user-defined input DNA $s$ sequence I want to output a potential pool of \link{https://en.wikipedia.org/wiki/Deoxyribozyme}{DNAzyme} $D=\{d_1,\ldots,d_n\}$ (catalytic DNA molecules) that will target $s$.
+\par
+\paragraph{\textbf{Scientific/Computational Interest}}
+This is interesting scientifically as DNA is relatively easy to synthesize, both as synthetic oligonucleotides and within cells.
+Thus being able to design DNAzymes with high affinity to an arbitrary sequence could be useful to easily and specifically cleaving DNA without the need for protein intermediaries, such as CRISPR-Cas9.
+They may also be useful for researcher who want to study the catalytic properties of DNA and why they have never been found \textit{in vivo}.
+\paragraph{\textbf{Approach and Feasibility}}
+The approach would be to essentially simulate \link{https://en.wikipedia.org/wiki/Systematic_evolution_of_ligands_by_exponential_enrichment}{SELEX} \textit{in silico} using a genetic algorithm.
+One would start with a random pool of sequences and then score them based on whether they would be a suitable DNAzyme for our target (fitness score).
+Then the best preforming sequences and a new set of sequences ``bred'' from the highest fitness sequences  would form our new sequence pool.
+This would continue for a set amount of iterations or until the average fitness of the sequence pool remains the same for a set amount of iterations.
+Since this is a genetic algorithm the breeding would include both mutation and crossover steps for each sequence.
+The suitability would be based on
+\begin{itemize}
+    \item sequence complementarity to the target
+    \item melting temperature of the sequence
+    \item presence of hairpins (palindromes)
+    \item likelihood that a sequence is catalytic
+\end{itemize}
+The last element can be estimated by building a machine learning model based on known DNAzyme sequences from the \link{https://www.genesilico.pl/DNAmoreDB/}{DNArmoreDB Database} and other sources that include non-DNAzyme short sequences (aptamers, random sequences etc.).
+The model (a classifier) would output a probability that a sequence is DNAzyme.
+\par
+Alternatively the model could evaluate the affinity of the DNA sequence to bind a DNA binding domain, again trained on known binding motifs of the domain such as in a database \link{https://academic.oup.com/nar/article/47/D1/D322/5204332}{ENPD} or one listed \link{https://www.mdpi.com/1422-0067/16/3/5194}{here} or a pre-existing tool if it exists.
+\paragraph{\textbf{External Resources}}
+The sources of the training data are the only external ressources needed, besides computational ressources for training the model and running a genetic algorithm.
+\end{document}
+
+
