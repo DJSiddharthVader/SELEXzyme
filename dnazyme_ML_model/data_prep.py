@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import scipy.stats
 import pandas as pd
 from tqdm import tqdm
 from Bio import SeqIO
@@ -25,22 +26,41 @@ promoter_fasta_filepath = os.path.join(data_dir,'NCBI_Promoters.fasta')
 # Constants
 DNA_ALPHABET = 'ACGT'
 
+# GetGCContentDistribution() get the distribution of GC content from a collection of sequences
+# input: sequence iterable
+# output: scipy.stats distribution object
+def GetGCContentDistribution(sequences):
+    distribution_list = [(seq.upper().count('G')+seq.upper().count('C'))/len(seq) for seq in sequences]
+    return scipy.stats.gaussian_kde(distribution_list)
+
 # MakeRandomSequence() produces a random sequence of length L from
-def MakeRandomSequence(length):
-    return ''.join(random.choice(DNA_ALPHABET) for i in range(0,length))
+# input: length of sequence, percent of bases that are G or C
+# output: random sequence (each base is picked randomly but with constraints
+def MakeRandomSequence(length,gcContentProportion):
+    bases = []
+    for i in range(0,length):
+        gcProbability = random.uniform(0,1)
+        if gcProbability < gcContentProportion:
+            base = random.choice(['G','C'])
+        else:
+            base = random.choice(['A','T'])
+        bases.append(base)
+    return ''.join(bases)
 
 # MakeRandomSequenceDf() produces a pandas df of N random sequences of legnth lower to upper
 # input: n size of dataframe, lower and upper are lower/upper bounds of the sequence length
 # output: pandas dataframe of random sequences
-def MakeRandomSequenceDf(n,lower,upper,label,binary_label):
+def MakeRandomSequenceDf(n,lower,upper,gcContentDistribution,label,binary_label):
     rows = []
     for i in tqdm(range(n)):
         length = random.choice(range(lower,upper)) #random length between lower and upper
-        row = {'GI':'RSID_{}'.format(i),    # not particularly important, just used as unique identifiers and allows for pd.concat()
+        gcContent = gcContentDistribution.resample(1) #randomly sample GC proportion
+        sequence = MakeRandomSequence(length,gcContentDistribution)
+        row = {'GI':'RSID_{}'.format(i), # not particularly important, allows for pd.concat()
                'Identifier_Type':'RSID',
                'Identifier_Value':'RSID_{}'.format(i),
                'Description':'Random Sequence {}'.format(i),
-               'Sequence':MakeRandomSequence(length)}
+               'Sequence':sequence}
         rows.append(row)
     df = pd.DataFrame(rows)
     df['Label'] = label #classification labels
@@ -88,7 +108,8 @@ def MakeData():
     promoter_df = FastaToDf(promoter_fasta_filepath,'Promoter','Not_DNAzyme')
     # Make Random dataframe
     total_sequences = sum([dnazyme_df.shape[0],aptamer_df.shape[0],promoter_df.shape[0]])
-    random_df = MakeRandomSequenceDf(int(total_sequences/3),50,300,'Random','Not_DNAzyme')
+    gcContentDistribution = GetGCContentDistribution(dnazyme_df['Sequence'])
+    random_df = MakeRandomSequenceDf(int(total_sequences/3),50,300,gcContentDistribution,'Random','Not_DNAzyme')
     # Combine all dataframes together
     all_df = pd.concat([dnazyme_df,aptamer_df,promoter_df,random_df])
     return all_df
