@@ -85,6 +85,50 @@ func BreedSequence(pop Population, label int) Member {
     return newSequence
 }
 // BreedNewGeneration() create a new population from previous best members and breeding new members from them
-// BreedUntilFinished() keep breeding new generations until average fitness plateaus or a specific number of generations has passed
-// WriteToFile() write every member of the population into a file, either tsv or fasta
-*/
+// input: a population of sequences and how many you will pick (proportion is in (0,1)
+// output: new population of Sequences
+func BreedNewGeneration(generation Population) Population {
+    nextGeneration := make(Population,len(generation))
+    fittestMembers := GetFittestMembers(generation)
+    for i,member := range fittestMembers {
+        member.label = i
+        nextGeneration[i] = Member{label:i,
+                                     fitness:member.fitness,
+                                     seq:member.seq,
+                                    }
+    }
+    for i:=len(fittestMembers);i<len(nextGeneration);i++ {
+        //breed new sequences untill our new generation is same size as previous
+        nextGeneration[i] = BreedSequence(fittestMembers,i)
+    }
+    return nextGeneration
+}
+
+//Decide when to stop breeding new generations
+// FitnessPlateau() checks if a population has plateaued in fitness
+// actually checks if covarinace of mean fitness of the last n generations is < tolerance
+// n and toleracen are user defined
+// input: population
+// output: whether fitness has plateued, bool
+func FitnessPlateau(generationFitnesses []float64) bool {
+// const FITNESS_PLATEAU_GENERATIONS = 5 //number of generations for which fintess must have plateaued to halt simulation
+    cov := CoV(generationFitnesses[FITNESS_PLATEAU_GENERATIONS:len(generationFitnesses)])
+    return (cov < FITNESS_PLATEAU_TOLERANCE)
+}
+// RunSimulation() runs a genetic algorithm and returns the final generation
+// input: number of seqs in poplation, upper and lower bound sequence length
+// for the initial population, maximum number of iterations
+// output: last generation of sequences
+func RunSimulation(size,lower,upper,maxIterations int) Population {
+    generationFitnesses := make([]float64,maxIterations)
+    currentGen := InitializeGeneration(size,lower,upper)
+    for gen := 0; gen < maxIterations; gen++ {//terminate regardless after maxIterations
+        generationFitnesses = append(generationFitnesses,currentGen.MeanFitness())
+        if FitnessPlateau(generationFitnesses) {//check if average fitness has plateaued
+            return currentGen //if plateau, no improvements from continnuing simulation, finish
+        }
+        currentGen = BreedNewGeneration(currentGen)
+    }//never reached fitness plateau
+    return currentGen
+}
+
