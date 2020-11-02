@@ -1,18 +1,11 @@
 package main
 
 import(
+    "fmt"
     "math/rand"
 )
-
-// RandomIntBetween() returns a random in between 2 other ints
-// input: lower and upper bounds
-// output: random int between lower and upper
-// from https://flaviocopes.com/go-random/
-func RandomIntBetween(lower,upper int) int {
-    if lower >= upper {
-        panic("lower must be strictly smaller than upper")
-    }
-    return lower + rand.Intn(upper-lower)
+func newlinebreed() {
+    fmt.Println()
 }
 // MakeRandomSeq() returns a random DNA string of the given length
 // input: int length of the sequence
