@@ -14,9 +14,8 @@ func newlinebreed() {
 // output: string DNA sequence
 func MakeRandomSeq(length int) string {
     var seq string
-    var DNA_ALPHABET = []string{"A","G","C","T"}
     for i := 0; i < length; i++ {
-        seq = seq + DNA_ALPHABET[rand.Intn(len(DNA_ALPHABET))] // pick a random element from the alphabet
+        seq = seq + PickRandomBase() // pick a random element from the alphabet
     }
     return seq
 }
