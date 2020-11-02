@@ -22,8 +22,8 @@ func MakeRandomSeq(length int) string {
 // MakeRandomSequence() returns a random Sequence Object with a seq of the given length
 // input: length of the sequence
 // output: Sequence object
-func MakeRandomSequence(length int) Sequence {
-    var s Sequence
+func MakeRandomSequence(length int) Member {
+    var s Member
     s.seq = MakeRandomSeq(length)
     s.ScoreFitness()
     return s
@@ -34,9 +34,7 @@ func MakeRandomSequence(length int) Sequence {
 func InitializeGeneration(size,lower,upper int) Population {
     population := make([]Member,size)
     for i := 0; i < size; i++ {
-        length = RandomIntBetween(lower,upper)
-        member = MakeRandomSequence(length)
-        population = append(population,member)
+        population[i] = MakeRandomSequence(RandomIntBetween(lower,upper))
     }
     return population
 }
