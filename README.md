@@ -1,6 +1,13 @@
 SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 =============================================================================
 
+## Demo Idea
+- pick an miRNA
+- evolve dnazymes
+- plot various sequence stats against fitness (GC content, length, etc.)
+- compare alignment to known in vivo verified dnazymes
+- estimate fitness for known seqs and comapre to generations
+
 ## Project Overview
 
 ## Genetic Algorithm
@@ -55,26 +62,25 @@ Running the program will be as follows
 `./src/genetic_algorithm/genetic_algorithm $target.fasta $output_file $num_gens $mutation_rate $population_size $model_file $output_format`
 
 The parameters are
- - `$target.fasta` fasta file with 1 entry containg the sequence you want a DNAzyme to target
+ - `$target.fasta` fasta file with 1 entry contain the sequence you want a DNAzyme to target
  - `$output_file` csv file containing a population of solutions with sequence info in the header
    - csv include columns:
      - __seqeunce:__ the DNAzyme sequence
      - __id:__ unique identifier for this sequence
      - __hairpins:__ number of hairpins found
-     - __melting_temp:__ melting temperature
        __dnazyme_score:__ the score output from our dnazyme model described [here](#machine-learning-dnazyme-classification-model)
      - __fitness:__ total fitness score as described in [above](#fitness-function)
    - `$output_format` either csv or fasta, fasta will contain csv info in the header of each sequence
    - `$num_gens` maximum number of generations to simulate if fitness does not plateau before
    - `$mutation_rate` mutation rate for new sequences described [here](#mutation)
    - `$population_size` total number of sequences in the population
-   - `$model_file` file with paramaters for model making the dnazyme prediction
+   - `$model_file` file with parameters for model making the dnazyme prediction
 
 ### Dependencies
 A conda environment yml and a requirements.txt are included for the python dependencies
 
 #### Programs
- - blastn
+ -
 
 #### Python
  - Biopython
