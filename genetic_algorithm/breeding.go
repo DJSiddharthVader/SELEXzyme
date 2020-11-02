@@ -7,6 +7,8 @@ import(
 func newlinebreed() {
     fmt.Println()
 }
+
+//Initialize random pool of sequences
 // MakeRandomSeq() returns a random DNA string of the given length
 // input: int length of the sequence
 // output: string DNA sequence
@@ -27,13 +29,11 @@ func MakeRandomSequence(length int) Sequence {
     s.ScoreFitness()
     return s
 }
-// RandomIntBetween() returns a random in between 2 other ints
-// input: lower and upper bounds
-// output: random int between lower and upper
-func InitializeGeneration(size,lower,upper int) []Sequence {
-    population := make([]Sequence,size)
-    var length int
-    var member Sequence
+// InitializeGeneration() create a random pool of sequences to start our gentic algorithmj
+// input:  the number of sequences to generate and lower,upper bounds onsequence length
+// output: a new random population (slice of Sequences) with size members
+func InitializeGeneration(size,lower,upper int) Population {
+    population := make([]Member,size)
     for i := 0; i < size; i++ {
         length = RandomIntBetween(lower,upper)
         member = MakeRandomSequence(length)
