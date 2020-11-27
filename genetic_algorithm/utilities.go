@@ -6,6 +6,7 @@ import(
     "sort"
     "math"
     "math/rand"
+    "strings"
     "github.com/biogo/biogo/alphabet"
     "github.com/biogo/biogo/seq"
     "github.com/biogo/biogo/seq/linear"
@@ -15,6 +16,14 @@ import(
 // Min() returns minimum of 2 ints
 func Min(x,y int) int {
     if x < y {
+        return x
+    } else {
+        return y
+    }
+}
+// Max() returns maximum of 2 ints
+func Max(x,y int) int {
+    if x > y {
         return x
     } else {
         return y
@@ -80,8 +89,8 @@ func (pop Population) SortByFitness() Population {
 // MeanFitness() get mean fitness of every Sequence in a population
 func (pop Population) MeanFitness() float64 {
     fitnesses := make([]float64,len(pop))
-    for i,Seq := range pop {
-        fitnesses[i] = Seq.fitness
+    for i,member := range pop {
+        fitnesses[i] = member.fitness
     }
     return Mean(fitnesses)
 }
@@ -94,10 +103,8 @@ func (s Member) ConvertToSeqObject() seq.Sequence {
     alphaSeq := alphabet.BytesToLetters([]byte(s.seq))
     return linear.NewSeq(label,alphaSeq,alphabet.DNA)
 }
-// WriteToFasta () write every member of the population into a file, either tsv or fasta
-// output file may conatin < len(pop) entries vecause it removes duplicates
+// WriteToFasta () write every member of the population into a fasta file
 // input: population, list of members
-// output: no return, write file to filename
 func (pop Population) WriteToFasta(filename string) {
     //convert to seq.Sequence object
     outfile,err := os.Create(filename)
@@ -106,11 +113,42 @@ func (pop Population) WriteToFasta(filename string) {
     }
     defer outfile.Close()
     writer := fasta.NewWriter(outfile,80) //width 80
-    fmt.Println(len(pop))
-    for i,member := range pop {
+    for _,member := range pop {
         writer.Write(member.ConvertToSeqObject())
-        fmt.Println(i)
     }
 }
+// WriteToTSV() write every member of the population into a tsv file
+// input: population, list of members
+func (pop Population) WriteToTSV(filename string) {
+    //convert to seq.Sequence object
+    outfile,err := os.Create(filename)
+    if err != nil {
+        panic(err)
+    }
+    defer outfile.Close()
+    line := fmt.Sprint("Index\tSeqLabel\tFitness\tSequence\n")
+    outfile.WriteString(line)
+    for i,member := range pop {
+        line = fmt.Sprintf("%d\tSequence_%d\t%f\t%s\n",i,member.label,member.fitness,member.seq)
+        outfile.WriteString(line)
+    }
+}
+// WriteResults () write every member of the population into a file, either tsv or fasta
+// output file may conatin < len(pop) entries Because it removes duplicates
+// input: population, list of members
+// output: no return, write file to filename
+func (pop Population) WriteResults(filename string) {
+    splits := strings.Split(filename,".") //last element of split is the extension
+    extension := splits[len(splits)-1] //last element of split is the extension
+    switch extension {
+        case "fna":
+            pop.WriteToFasta(filename)
+        case "tsv":
+            pop.WriteToTSV(filename)
+        default:
+            panic(fmt.Sprintf("Invalid outfile format, must be {fna|tsv}"))
+    }
+}
+
 /*
 */
