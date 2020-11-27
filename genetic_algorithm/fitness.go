@@ -2,7 +2,11 @@ package main
 
 import(
     "fmt"
+    "github.com/biogo/biogo/alphabet"
+    "github.com/biogo/biogo/seq/linear"
 )
+
+const minimum_hairpin_length = 4
 
 // ReverseComplement() reverses a DNA string and takes the complement
 // output: string
@@ -20,7 +24,7 @@ func (s Member) HasHairpins() int {
     totalHalfwayPoint := int(len(s.seq)/2)
     var halfwayPoint int
     var firstHalf,secondHalfReverse string
-    for windowSize := MINIMUM_HAIRPIN_LENGTH; windowSize < totalHalfwayPoint; windowSize++ {
+    for windowSize := minimum_hairpin_length; windowSize < totalHalfwayPoint; windowSize++ {
         // check for pallendroms of length ranging from 2*minimumLength bp to half of the entire sequence
         // 0.5 times length of the pallendrome
         for windowStart := 0; windowStart <= len(s.seq)-windowSize; windowStart++{
@@ -40,14 +44,27 @@ func (s Member) HasHairpins() int {
     return hairpins
 }
 // Complementarity() returns BLAST score of sequence to target, higher is better for fitness
-// output: float64
-func (s Member) Complementarity(target Member) float64 {
-    return float64(len(s.seq)+len(target.seq))
+// output: float64, local (SW) alignment score of the 2 sequences
+// thoguh target is an argument it will be constant through out the simulation
+// as it will always be the user supplied target sequence
+func (s Member) Complementarity(target *linear.Seq) float64 {
+    seq := &linear.Seq{Seq:alphabet.BytesToLetters([]byte(s.seq))}
+    seq.Alpha = ALPHABET //set alphabet, required by biogo
+    aln, err := SW_MATRIX.Align(seq,target)
+    if err != nil { panic(err) }
+    swScore := aln[0].(Scorer).Score()
+    return float64(swScore)/float64(Min(len(s.seq),len(target.Seq)))
+}
+// CallDNAzymeModel() call a machine learning model to estimate
+// the likelihood  that this sequence is a DNAzyme
+func (s Member) CallDNAzymeModel() float64 {
+    var score float64
+    return score
 }
 // ScoreFitness() asseses the total fitness of a sequence
 // output: fitness score of s.seq
-func (s Member) ScoreFitness() float64 {
-    return float64(len(s.seq))
+func (s Member) ScoreFitness(target *linear.Seq) float64 {
+    return s.Complementarity(target)
 }
 
 /*DEPRECIATED
@@ -83,6 +100,4 @@ func (s Sequence) HasHairpins() int {
     return hairpins
 }
 */
-func newline() {
-    fmt.Println()
-}
+func newline() { fmt.Println() }
