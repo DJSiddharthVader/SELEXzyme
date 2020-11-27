@@ -1,16 +1,24 @@
 package main
 
-//Simulation parameters
-const OPTIMAL_MELTING_TEMP = 37 //human body temperature in celcius
-const MINIMUM_HAIRPIN_LENGTH = 4 //only count hairpins of length 4
-const MUTATION_RATE = 0.005 //mutation rate for sequences
-const TOP_SEQUENCE_PERCENT = 0.2 //percentage of sequences to use for breeding
-const FITNESS_PLATEAU_TOLERANCE= 0.25 //maximum std dev. of average seq fitness of past generations until stopping
-const FITNESS_PLATEAU_GENERATIONS = 5 //number of generations for which fintess must have plateaued to halt simulation
+import(
+    "github.com/biogo/biogo/alphabet"
+    "github.com/biogo/biogo/align"
+)
 
 //Constants
 var DNA_ALPHABET = [4]rune{'A','C','G','T'}
 var DNA_COMPLEMENTS = map[rune]rune{'A':'T','C':'G','G':'C','T':'A'}
+var ALPHABET = alphabet.DNAgapped //alphabet for sequences
+var SW_MATRIX = align.SWAffine { //alignment matrix for SW, example from biogo docs
+        Matrix:  [][]int{        //       -   A   C   G   T
+            {0, -1, -1, -1, -1}, // -     0  -1  -1  -1  -1
+            {-1, 1, -2, -2, -2}, // A    -1   1  -2  -2  -2
+            {-1, -2, 1, -2, -2}, // C    -1  -2   1  -2  -2
+            {-1, -2, -2, 1, -2}, // G    -1  -2  -2   1  -2
+            {-1, -2, -2, -2, 1}, // T    -1  -2  -2  -2   1
+        }, GapOpen: -5, //gap opening penalty
+}
+
 
 //Data Types
 type Member struct {
@@ -19,3 +27,7 @@ type Member struct {
     label int
 }
 type Population []Member
+//for getting alignment score from biogo
+type Scorer interface {
+    Score() int
+}
