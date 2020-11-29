@@ -6,6 +6,9 @@ import(
     "github.com/biogo/biogo/seq/linear"
     "github.com/cheggaaa/pb"
 )
+
+const indel_rate = 0.1 // probability a mutation is an indel
+
 //Initialize random pool of sequences
 // MakeRandomSeq() returns a random DNA string of the given length
 // input: int length of the sequence
@@ -26,7 +29,7 @@ func MakeRandomSequence(length int, target *linear.Seq) Member {
     s.ScoreFitness(target)
     return s
 }
-// InitializeGeneration() create a random pool of sequences to start our gentic algorithmj
+// InitializeGeneration() create a random pool of sequences to start our gentic algorithm
 // input:  the number of sequences to generate and lower,upper bounds onsequence length
 // output: a new random population (slice of Sequences) with size members
 func InitializeGeneration(size,lower,upper int,target *linear.Seq) Population {
@@ -49,13 +52,21 @@ func (s Member) Crossover(t Member) string {
 // Mutate() mutates a DNA sequence at each position with some probability
 // input: probability that each site will be mutated
 // output: sequence with mutations
-func (s Member) Mutate(mutation_rate float64) string {
+func (s Member) Mutate(mutation_rate,indel_rate float64) string {
     var mutated string
     for _,base := range s.seq {
         if rand.Float64() > mutation_rate {//dont mutate
             mutated = mutated + string(base)
         } else {//mutate this base to a new base
-            mutated = mutated + PickDifferentRandomBase(base)
+            if rand.Float64() > indel_rate {//regular mutation
+                mutated = mutated + PickDifferentRandomBase(base)
+            } else {
+                if rand.Intn(2) == 0 {// insert new base
+                    mutated = mutated + string(base) + PickRandomBase()
+                } else {
+                    //delete base (add nothing)
+                }
+            }
         }
     }
     return mutated
@@ -72,12 +83,12 @@ func GetFittestMembers(generation Population, top_sequence_percent float64) Popu
 // BreedSequence() breeds a new sequence from a population
 // input: some set of sequences
 // output: a single new sequence bred from 2 random population members
-func BreedSequence(pop Population, label int,target *linear.Seq, mutation_rate float64) Member {
+func BreedSequence(pop Population, label int,target *linear.Seq, mutation_rate,indel_rate float64) Member {
     seq1 := pop[rand.Intn(len(pop))] //pick a random Sequence
     seq2 := pop[rand.Intn(len(pop))] //pick another random Sequence
     newSequence := Member{seq:seq1.seq}
     newSequence.seq = newSequence.Crossover(seq2)
-    newSequence.seq = newSequence.Mutate(mutation_rate)
+    newSequence.seq = newSequence.Mutate(mutation_rate,indel_rate)
     newSequence.fitness = newSequence.ScoreFitness(target)
     newSequence.label = label
     return newSequence
@@ -85,7 +96,7 @@ func BreedSequence(pop Population, label int,target *linear.Seq, mutation_rate f
 // BreedNewGeneration() create a new population from previous best members and breeding new members from them
 // input: a population of sequences and how many you will pick (proportion is in (0,1)
 // output: new population of Sequences
-func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64 ,top_sequence_percent float64) Population {
+func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64, indel_rate float64, top_sequence_percent float64) Population {
     nextGeneration := make(Population,len(generation))
     fittestMembers := GetFittestMembers(generation,top_sequence_percent)
     for i,member := range fittestMembers {
@@ -97,7 +108,7 @@ func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate
     }
     for i:=len(fittestMembers);i<len(nextGeneration);i++ {
         //breed new sequences untill our new generation is same size as previous
-        nextGeneration[i] = BreedSequence(fittestMembers,i,target,top_sequence_percent)
+        nextGeneration[i] = BreedSequence(fittestMembers,i,target,mutation_rate,indel_rate)
     }
     return nextGeneration
 }
@@ -108,10 +119,19 @@ func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate
 // n and toleracen are user defined
 // input: mean fitness of previous generations
 // output: whether fitness has plateued, bool
-func FitnessPlateau(fitnesses []float64, fitness_plateau_tolerance float64, fitness_plateau_generations int) bool {
-// const FITNESS_PLATEAU_GENERATIONS = 5 //number of generations for which fintess must have plateaued to halt simulation
-    cov := CoV(fitnesses[Max(0,len(fitnesses)-fitness_plateau_generations-1):len(fitnesses)-1])
-    return (cov < fitness_plateau_tolerance)
+func FitnessPlateau(mode string, fitnesses [][]float64, fitness_plateau_tolerance float64) bool {
+    switch mode {
+        case "cov_mean"://mean fitness CoV for last few generations
+            var meanFitnesses []float64
+            for _,fitness := range fitnesses {
+                meanFitnesses = append(meanFitnesses,Mean(fitness))
+            }
+            return (CoV(meanFitnesses) < fitness_plateau_tolerance)
+        case "cov": //CoV of fitness for last generation
+            return (CoV(fitnesses[len(fitnesses)-1]) < fitness_plateau_tolerance)
+        default:
+            panic("Invalid plateau mode, must be {cov_mean|std_dev}")
+        }
 }
 // RunSimulation() runs a genetic algorithm and returns the final generation
 // input: simulation parameters as commented
@@ -120,23 +140,28 @@ func RunSimulation(lower int,
                    upper int,
                    size int,
                    maxIterations int,
-                   target *linear.Seq,
+                   targetFile string,
                    mutation_rate float64,
+                   indel_rate float64,
                    top_sequence_percent float64,
+                   fitness_mode string,
                    fitness_plateau_tolerance float64,
-                   fitness_plateau_generations int) Population {
-    // generationFitnesses := make([]float64,maxIterations)
-    var generationFitnesses []float64
+                   plateau_gens int) Population {
+    target := ReadTargetFromFasta(targetFile)
     currentGen := InitializeGeneration(size,lower,upper,target)
     bar := pb.StartNew(maxIterations).Prefix("Generations:")
+    var generationFitnesses [][]float64 //list of fitness values for all solutions for each generation
     for gen := 0; gen < maxIterations; gen++ {//terminate regardless after maxIterations
-        generationFitnesses = append(generationFitnesses,currentGen.MeanFitness())
+        //keep only last plateau_gens generational fitnesses stored
+        generationFitnesses = generationFitnesses[Max(0,len(generationFitnesses)-plateau_gens):len(generationFitnesses)]
+        generationFitnesses = append(generationFitnesses,currentGen.FitnessList())
         //check if average fitness has plateaued
-        if FitnessPlateau(generationFitnesses,fitness_plateau_tolerance,fitness_plateau_generations) {
+        if FitnessPlateau(fitness_mode,generationFitnesses,fitness_plateau_tolerance,) {
+            bar.Finish()
             fmt.Println("Reached Fitness Plateau at generation ",gen)
             return currentGen //if plateau, no improvements from continnuing simulation, finish
         }
-        currentGen = BreedNewGeneration(currentGen,target,mutation_rate,top_sequence_percent)
+        currentGen = BreedNewGeneration(currentGen,target,mutation_rate,indel_rate,top_sequence_percent)
         bar.Increment()
     }//never reached fitness plateau
     bar.Finish()
@@ -144,4 +169,3 @@ func RunSimulation(lower int,
     return currentGen
 }
 
-func newlinebreed() { fmt.Println() }
