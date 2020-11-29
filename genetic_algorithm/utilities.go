@@ -37,15 +37,18 @@ func Mean(n []float64) float64 {
     }
     return total/float64(len(n))
 }
-// CoV() coefficient of variance of a list of normalized numbers
-func CoV(n []float64) float64 {
+// StdDev() Stanrad deviation of n numbers
+func StdDev(n []float64) float64 {
     mean := Mean(n)
     total := 0.0
     for _,f := range n {
         total += math.Pow(f-mean,2)
     }
-    stdDev := math.Sqrt(total/float64(len(n)-1))
-    return math.Abs(stdDev/mean)
+    return math.Sqrt(total/float64(len(n)-1))
+}
+// CoV() coefficient of variance of a list of normalized numbers
+func CoV(n []float64) float64 {
+    return math.Abs(StdDev(n)/Mean(n))
 }
 
 // RandomIntBetween() returns a random in between 2 other ints
@@ -65,7 +68,6 @@ func PickRandomBase() string {
 // PickDifferentRandomBase() picks a random DNA base that
 // is different from the base you pass as an argument
 func PickDifferentRandomBase(base rune) string {
-    // var DNA_ALPHABET = [4]rune{'A','C','G','T'}
     var baseIndex int
     switch base {
         case 'A':// A is at position 0, avoid it
@@ -80,6 +82,14 @@ func PickDifferentRandomBase(base rune) string {
     return string(DNA_ALPHABET[baseIndex])
 }
 
+// FitnessList() returns a slice of all fitness values for pop members
+func (pop Population) FitnessList() []float64 {
+    fitnesses := make([]float64,len(pop))
+    for i,member := range pop {
+        fitnesses[i] = member.fitness
+    }
+    return fitnesses
+}
 // SortByFitness() returns a copy of pop sorted ascending order of fitness
 // so the fittest sequences are at the end of the sorted slice
 func (pop Population) SortByFitness() Population {
@@ -88,20 +98,48 @@ func (pop Population) SortByFitness() Population {
 }
 // MeanFitness() get mean fitness of every Sequence in a population
 func (pop Population) MeanFitness() float64 {
-    fitnesses := make([]float64,len(pop))
-    for i,member := range pop {
-        fitnesses[i] = member.fitness
-    }
-    return Mean(fitnesses)
+    return Mean(pop.FitnessList())
+}
+// Summarize() prints some summary statistics for the fitnesses of a population
+func (pop Population) Summarize() {
+    fitnesses := pop.SortByFitness().FitnessList()
+    fmt.Println("-------------------------------------")
+    fmt.Println("Min..............",fitnesses[0]) //sorted
+    fmt.Println("25% Quart        ",fitnesses[len(fitnesses)/4])
+    fmt.Println("Mean.............",Mean(fitnesses))
+    fmt.Println("75% Quart        ",fitnesses[3*len(fitnesses)/4])
+    fmt.Println("Max..............",fitnesses[len(fitnesses)-1])
+    fmt.Println("Std. Dev         ",StdDev(fitnesses))
+    fmt.Println("CoV..............",CoV(fitnesses))
+    fmt.Println("-------------------------------------")
 }
 
+// ReadTargetFromFasta() takes a fasta file and returns the first entry as a *linear.Seq object
+// input: fasta file name
+// output: biogo *linear.Seq object, can be aligned
+func ReadTargetFromFasta(fastafilename string) *linear.Seq {
+    fastaFile, err := os.Open(fastafilename)
+    if err != nil { panic(err) }
+    defer fastaFile.Close()
+
+    template := linear.NewSeq("",alphabet.Letters{},alphabet.DNA)
+    reader := fasta.NewReader(fastaFile,template)
+    targetSeq, err := reader.Read() //read first seq in file
+    if err != nil { panic(err) }
+    var sequence string //DNA sequence
+    for i:=0; i<targetSeq.Len(); i++ {//add one letter at a time
+        sequence += strings.ToUpper(string(targetSeq.At(i).L))
+    }
+    target := linear.Seq{Seq:[]alphabet.Letter(sequence)}
+    target.Alpha = ALPHABET
+    return &target
+}
 // ConvertToSeqObject() converts a Member to a seq.Sequence (biogo object) for file writing
 // input: member object
 // output: biogo.linear.Seq object that can be writen easily
 func (s Member) ConvertToSeqObject() seq.Sequence {
     label := fmt.Sprintf("Sequence_%v | Fitness:%v",s.label,s.fitness,)
-    alphaSeq := alphabet.BytesToLetters([]byte(s.seq))
-    return linear.NewSeq(label,alphaSeq,alphabet.DNA)
+    return linear.NewSeq(label,[]alphabet.Letter(s.seq),alphabet.DNA)
 }
 // WriteToFasta () write every member of the population into a fasta file
 // input: population, list of members
