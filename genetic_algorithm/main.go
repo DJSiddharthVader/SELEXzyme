@@ -72,9 +72,9 @@ func main() {
     rand.Seed(9) //for testing
     //Parse Arguments
     //Initialization Params
-    lower := flag.Int("lower",50,"minimum length of initial sequences")
-    upper := flag.Int("upper",500,"maximum length of initial seuqences")
-    size := flag.Int("size",500,"number of sequences in the populations")
+    lower := flag.Int("lower",10,"minimum length of initial sequences")
+    upper := flag.Int("upper",100,"maximum length of initial seuqences")
+    size := flag.Int("size",1000,"number of sequences in the populations")
     maxIterations := flag.Int("maxIters",30,"max generations to simulate")
     targetFastaFile := flag.String("target","target.fna","target sequence for generated dnazymes to catalyze")
 
@@ -82,13 +82,15 @@ func main() {
     mutation_rate := flag.Float64("mutation",0.005,"mutation rate for sequences, in [0,1]")
     indel_rate := flag.Float64("indel",0.1,"probability for mutation being an indel, in [0,1]")
     top_sequence_percent := flag.Float64("top_seqs",0.2,"percentage of sequences to use for breeding, in [0,1]")
+    model_file := flag.String("model","../dnazyme_ML_model/dnazyme_SGD_Classifier_v1.pickle","model used for DNAzyme evaluation (pickle of sklearn model")
     // minimum_hairpin_length := flag.Int("hairpin_len",4,"minimum size for a sequence to be considered pallindromic")
 
     //Termination Params
     fitness_plateau_mode := flag.String("plateau","cov_mean","criteria for deciding on fitness plateau, one of {cov_mean|cov}")
-    fitness_plateau_tolerance := flag.Float64("plateau_tol",0.00005,"maximum CoV of previous generations of fitness when deciding on plateau")
+    fitness_plateau_tolerance := flag.Float64("plateau_tol",0.005,"maximum CoV of previous generations of fitness when deciding on plateau")
     fitness_plateau_generations := flag.Int("plateau_gens",5,"number of generations to consider for evaluating fitness plateau")
     outputfile := flag.String("output","dnazymes.fna","output file name for final set of dnazymes, must have extension {.tsv|.fna}")
+
     flag.Parse()
     CheckParams(*lower,
                 *upper,
@@ -110,6 +112,7 @@ func main() {
                              *mutation_rate,
                              *indel_rate,
                              *top_sequence_percent,
+                             *model_file,
                              *fitness_plateau_mode,
                              *fitness_plateau_tolerance,
                              *fitness_plateau_generations)
