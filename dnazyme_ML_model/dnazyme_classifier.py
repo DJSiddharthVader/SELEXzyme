@@ -1,23 +1,41 @@
 import sys
 import pickle
-import numpy as np
-import utilities as util
+from Bio import SeqIO
+from sklearn.feature_extraction.text import HashingVectorizer
+
+kmer_len = 6  # size of kmers
+n_features = 4**kmer_len+1  # number of unique possible kmers, avoids collision
+VECTORIZER = HashingVectorizer(n_features=n_features)  # for str to kmer hash
 
 
-def main(sequence, model_file, kmer_size):
+def fasta_to_list(fasta_file):
+    return [str(rec.seq) for rec in SeqIO.parse(fasta_file, "fasta")]
+
+
+# turn a string into a list of non-overlapping kmers (1 space delimited string)
+def get_kmers(seq, size=kmer_len):
+    return ' '.join([seq[x:x+size].upper() for x in range(len(seq)-size+1)])
+
+
+# Vectorize list of kmers to format suitable for model prediction
+def seq_to_vector(fasta_file):
+    # list of kmers of size kmer_len per seq
+    seq_list = fasta_to_list(fasta_file)
+    kmer_lists = [get_kmers(seq) for seq in seq_list]
+    return VECTORIZER.transform(kmer_lists).toarray()
+
+
+def main(fasta_file, model_file):
     # load trained model
-    model = pickle.load(open(model_file, 'wb'))
+    model = pickle.load(open(model_file, 'rb'))
     # prep sequence to evaluate
-    words = util.get_words(sequence, util.KMER)  # convert seq to bagofwords
-    X = util.VECTORIZER.fit_transform([words]).toarray()  # length 1
-    # "normalize" SVM decision score to probability
-    # stackoverflow.com/questions/49507066/predict-probabilities-using-svm
-    pred = model.decision_function(X)[0]
-    prob = np.exp(pred)/np.sum(np.exp(pred))  # softmax
-    return prob
+    X = seq_to_vector(fasta_file)
+    # prob that label of seq is 1 (DNAzyme) according to model
+    predictions = model.predict_proba(X)
+    return [x[1] for x in predictions]
 
 
 if __name__ == '__main__':
-    sequence = sys.argv[1]
+    fasta_file = sys.argv[1]
     model_file = sys.argv[2]
-    main(sequence, model_file)
+    print(main(fasta_file, model_file))
