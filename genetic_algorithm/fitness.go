@@ -2,11 +2,17 @@ package main
 
 import(
     "fmt"
+    "os/exec"
+    "strconv"
+    "strings"
     "github.com/biogo/biogo/alphabet"
     "github.com/biogo/biogo/seq/linear"
 )
 
 const minimum_hairpin_length = 4
+const classifer_script = "../dnazyme_ML_model/dnazyme_classifier.py"
+const tmp_fasta = "./generation_tmp.fna"
+const python_exe = "/home/sidreed/anaconda3/envs/prog02601/bin/python"
 
 // ReverseComplement() reverses a DNA string and takes the complement
 // output: string
@@ -57,14 +63,29 @@ func (s Member) Complementarity(target *linear.Seq) float64 {
 }
 // CallDNAzymeModel() call a machine learning model to estimate
 // the likelihood  that this sequence is a DNAzyme
-func (s Member) CallDNAzymeModel() float64 {
-    var score float64
-    return score
+func (pop Population) CallDNAzymeModel(model_file string) []float64 {
+    pop.WriteToFasta(tmp_fasta)
+    cmd := exec.Command(python_exe, classifer_script, tmp_fasta, model_file)
+    out, err := cmd.Output()
+    if err != nil {
+        panic(err)
+    }
+    output := strings.Split(strings.TrimSuffix(string(out),"\n")," ")
+    predictions := make([]float64,len(pop))
+    for i, prediction := range output {
+        predictions[i], _ = strconv.ParseFloat(prediction, 64) // return model probability as a float
+    }
+    return predictions
 }
-// ScoreFitness() asseses the total fitness of a sequence
-// output: fitness score of s.seq
-func (s Member) ScoreFitness(target *linear.Seq) float64 {
-    return s.Complementarity(target)
+// ScoreFitness() asseses the total fitness every sequence in a population
+// output: no return, fitness is assigned for every seq inplace
+func (pop Population) ScoreFitness(target *linear.Seq, model_file string) {
+    predictions := pop.CallDNAzymeModel(model_file)
+    for i,member := range pop {
+        similarity := member.Complementarity(target)
+        dnazymeness := predictions[i]
+        pop[i].fitness = (similarity*0.4+dnazymeness*0.6)/2
+    }
 }
 
 /*DEPRECIATED
@@ -98,6 +119,13 @@ func (s Sequence) HasHairpins() int {
         }
     }
     return hairpins
+}
+// ScoreFitness() asseses the total fitness of a sequence
+// output: fitness score of s.seq
+func (s Member) ScoreFitness(target *linear.Seq, model_file string) float64 {
+    similarity := s.Complementarity(target)
+    dnazymeness := s.CallDNAzymeModel(model_file)
+    return (similarity*0.4+dnazymeness*0.6)/2
 }
 */
 func newline() { fmt.Println() }
