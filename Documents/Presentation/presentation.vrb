@@ -1,0 +1,9 @@
+\frametitle{Validation}
+\begin{figure}[htb!]
+    \makebox[\textwidth][c]{\includegraphics[width=0.9\linewidth]{validation.png}}
+\end{figure}
+\begin{itemize}
+    \item<2-> Computationally generated vs. \textit{in vitro} screened DNAzymes
+    \item<3-> Similar sequence composition (high alignment score)
+    \item<4-> \textit{in vitro} screened DNAzymes should have high fitness values
+\end{itemize}

@@ -1,0 +1,311 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{dnazyme}{article}{}
+      \name{author}{4}{}{%
+        {{uniquename=0,uniquepart=base,hash=fcce815f26e5ace8942fd1af15bbb488}{%
+           family={Achenbach},
+           familyi={A\bibinitperiod},
+           given={JC},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=7737177240883770f6c0f70011198cfa}{%
+           family={Chiuman},
+           familyi={C\bibinitperiod},
+           given={W},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=aad8bcbfd49397c24a8ff5c2a24016f7}{%
+           family={Cruz},
+           familyi={C\bibinitperiod},
+           given={RPG},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=66d548e0e670e107fc4a80dc0c3825b3}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Y},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Bentham Science Publishers}%
+      }
+      \strng{namehash}{ed6d57f2db72d2766966b53db3cb497c}
+      \strng{fullhash}{f121a8b78eeb6ba255473ac9b306a1ef}
+      \strng{bibnamehash}{ed6d57f2db72d2766966b53db3cb497c}
+      \strng{authorbibnamehash}{ed6d57f2db72d2766966b53db3cb497c}
+      \strng{authornamehash}{ed6d57f2db72d2766966b53db3cb497c}
+      \strng{authorfullhash}{f121a8b78eeb6ba255473ac9b306a1ef}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Current pharmaceutical biotechnology}
+      \field{number}{4}
+      \field{title}{DNAzymes: from creation in vitro to application in vivo}
+      \field{volume}{5}
+      \field{year}{2004}
+      \field{pages}{321\bibrangedash 336}
+      \range{pages}{16}
+    \endentry
+    \entry{apps}{article}{}
+      \name{author}{2}{}{%
+        {{uniquename=0,uniquepart=base,hash=82ecbae219cd3e89336a57aaa4226294}{%
+           family={Lu},
+           familyi={L\bibinitperiod},
+           given={Yi},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=6e646f1f01d8bd42005f52d71ab0376e}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Juewen},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \strng{fullhash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \strng{bibnamehash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \strng{authorbibnamehash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \strng{authornamehash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \strng{authorfullhash}{691f0548fbdc4f3e2f52dc63d2896cb7}
+      \field{sortinit}{6}
+      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Current opinion in Biotechnology}
+      \field{number}{6}
+      \field{title}{Functional DNA nanotechnology: emerging applications of DNAzymes and aptamers}
+      \field{volume}{17}
+      \field{year}{2006}
+      \field{pages}{580\bibrangedash 588}
+      \range{pages}{9}
+    \endentry
+    \entry{apps2}{article}{}
+      \name{author}{3}{}{%
+        {{uniquename=0,uniquepart=base,hash=398c036540bf3721c7aec39f0db6bdd2}{%
+           family={Morrison},
+           familyi={M\bibinitperiod},
+           given={Devon},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=bfdb296b87f68e4ac9386da5e16ee8df}{%
+           family={Rothenbroker},
+           familyi={R\bibinitperiod},
+           given={Meghan},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=ec68a92f094b20f43edb89c09fc91a08}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Yingfu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley Online Library}%
+      }
+      \strng{namehash}{f2c835c341c706713fcab0d3cf318911}
+      \strng{fullhash}{f2c835c341c706713fcab0d3cf318911}
+      \strng{bibnamehash}{f2c835c341c706713fcab0d3cf318911}
+      \strng{authorbibnamehash}{f2c835c341c706713fcab0d3cf318911}
+      \strng{authornamehash}{f2c835c341c706713fcab0d3cf318911}
+      \strng{authorfullhash}{f2c835c341c706713fcab0d3cf318911}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Small Methods}
+      \field{number}{3}
+      \field{title}{DNAzymes: selected for applications}
+      \field{volume}{2}
+      \field{year}{2018}
+      \field{pages}{1700319}
+      \range{pages}{1}
+    \endentry
+    \entry{selex}{article}{}
+      \name{author}{3}{}{%
+        {{uniquename=0,uniquepart=base,hash=2e1a791b808a6ee6cb4adc1bbda142f8}{%
+           family={Stoltenburg},
+           familyi={S\bibinitperiod},
+           given={Regina},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=9487319493d981244d2b23530c325b56}{%
+           family={Reinemann},
+           familyi={R\bibinitperiod},
+           given={Christine},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=db5e57dd11d719be5b239469314ab5db}{%
+           family={Strehlitz},
+           familyi={S\bibinitperiod},
+           given={Beate},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{30dab0262455f30de7c151e5f8c80167}
+      \strng{fullhash}{30dab0262455f30de7c151e5f8c80167}
+      \strng{bibnamehash}{30dab0262455f30de7c151e5f8c80167}
+      \strng{authorbibnamehash}{30dab0262455f30de7c151e5f8c80167}
+      \strng{authornamehash}{30dab0262455f30de7c151e5f8c80167}
+      \strng{authorfullhash}{30dab0262455f30de7c151e5f8c80167}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biomolecular engineering}
+      \field{number}{4}
+      \field{title}{SELEX---a (r) evolutionary method to generate high-affinity nucleic acid ligands}
+      \field{volume}{24}
+      \field{year}{2007}
+      \field{pages}{381\bibrangedash 403}
+      \range{pages}{23}
+    \endentry
+    \entry{ga_web}{misc}{}
+      \name{author}{1}{}{%
+        {{uniquename=0,uniquepart=base,hash=b84d8754342bc55014845ad73c650da7}{%
+           family={Bal},
+           familyi={B\bibinitperiod},
+           given={Ananya},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Medium}%
+      }
+      \strng{namehash}{b84d8754342bc55014845ad73c650da7}
+      \strng{fullhash}{b84d8754342bc55014845ad73c650da7}
+      \strng{bibnamehash}{b84d8754342bc55014845ad73c650da7}
+      \strng{authorbibnamehash}{b84d8754342bc55014845ad73c650da7}
+      \strng{authornamehash}{b84d8754342bc55014845ad73c650da7}
+      \strng{authorfullhash}{b84d8754342bc55014845ad73c650da7}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Demystifying Genetic Algorithms to enhance Neural Networks}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://medium.com/intel-student-ambassadors/demystifying-genetic-algorithms-to-enhance-neural-networks-cde902384b6e
+      \endverb
+      \verb{url}
+      \verb https://medium.com/intel-student-ambassadors/demystifying-genetic-algorithms-to-enhance-neural-networks-cde902384b6e
+      \endverb
+    \endentry
+    \entry{svm_dna}{article}{}
+      \name{author}{3}{}{%
+        {{uniquename=0,uniquepart=base,hash=58fdb3391f828f775b0aa30ea5eba3e5}{%
+           family={Xing},
+           familyi={X\bibinitperiod},
+           given={Zhengzheng},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=56af930e1f5e2c9a791b71e7b347c0ba}{%
+           family={Pei},
+           familyi={P\bibinitperiod},
+           given={Jian},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{uniquename=0,uniquepart=base,hash=1164ac6d1586ceeb53e02cf48b555413}{%
+           family={Keogh},
+           familyi={K\bibinitperiod},
+           given={Eamonn},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {ACM New York, NY, USA}%
+      }
+      \strng{namehash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \strng{fullhash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \strng{bibnamehash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \strng{authorbibnamehash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \strng{authornamehash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \strng{authorfullhash}{2e343eade83a5a9c1f57aa786fd71b7b}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM Sigkdd Explorations Newsletter}
+      \field{number}{1}
+      \field{title}{A brief survey on sequence classification}
+      \field{volume}{12}
+      \field{year}{2010}
+      \field{pages}{40\bibrangedash 48}
+      \range{pages}{9}
+    \endentry
+    \entry{svm_pic}{misc}{}
+      \name{author}{1}{}{%
+        {{uniquename=0,uniquepart=base,hash=9f51d68c927a4a2094fdafbc17dff764}{%
+           family={Flair},
+           familyi={F\bibinitperiod},
+           given={Data},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {DataFlair}%
+      }
+      \strng{namehash}{9f51d68c927a4a2094fdafbc17dff764}
+      \strng{fullhash}{9f51d68c927a4a2094fdafbc17dff764}
+      \strng{bibnamehash}{9f51d68c927a4a2094fdafbc17dff764}
+      \strng{authorbibnamehash}{9f51d68c927a4a2094fdafbc17dff764}
+      \strng{authornamehash}{9f51d68c927a4a2094fdafbc17dff764}
+      \strng{authorfullhash}{9f51d68c927a4a2094fdafbc17dff764}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Support Vector Machines Tutorial -- Learn to implement SVM in Python}
+      \field{year}{2017}
+      \verb{urlraw}
+      \verb https://data-flair.training/blogs/svm-support-vector-machine-tutorial/
+      \endverb
+      \verb{url}
+      \verb https://data-flair.training/blogs/svm-support-vector-machine-tutorial/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

@@ -1,0 +1,8 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {english}{}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {1}{DNAzymes}{3}{0}{1}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {2}{SELEX and Genetic Algorithms}{13}{0}{2}
+\defcounter {refsection}{0}\relax 
+\beamer@sectionintoc {3}{SELEXzyme}{15}{0}{3}
