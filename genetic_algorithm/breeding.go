@@ -7,8 +7,6 @@ import(
     "github.com/cheggaaa/pb"
 )
 
-const indel_rate = 0.1 // probability a mutation is an indel
-
 //Initialize random pool of sequences
 // MakeRandomSeq() returns a random DNA string of the given length
 // input: int length of the sequence
@@ -23,20 +21,20 @@ func MakeRandomSeq(length int) string {
 // MakeRandomSequence() returns a random Sequence Object with a seq of the given length
 // input: length of the sequence
 // output: Sequence object
-func MakeRandomSequence(length int, target *linear.Seq) Member {
+func MakeRandomSequence(length int) Member {
     var s Member
     s.seq = MakeRandomSeq(length)
-    s.ScoreFitness(target)
     return s
 }
 // InitializeGeneration() create a random pool of sequences to start our gentic algorithm
 // input:  the number of sequences to generate and lower,upper bounds onsequence length
 // output: a new random population (slice of Sequences) with size members
-func InitializeGeneration(size,lower,upper int,target *linear.Seq) Population {
-    population := make([]Member,size)
+func InitializeGeneration(size,lower,upper int,target *linear.Seq, model_file string) Population {
+    population := make(Population,size)
     for i := 0; i < size; i++ {
-        population[i] = MakeRandomSequence(RandomIntBetween(lower,upper),target)
+        population[i] = MakeRandomSequence(RandomIntBetween(lower,upper))
     }
+    population.ScoreFitness(target, model_file)
     return population
 }
 
@@ -83,20 +81,19 @@ func GetFittestMembers(generation Population, top_sequence_percent float64) Popu
 // BreedSequence() breeds a new sequence from a population
 // input: some set of sequences
 // output: a single new sequence bred from 2 random population members
-func BreedSequence(pop Population, label int,target *linear.Seq, mutation_rate,indel_rate float64) Member {
+func BreedSequence(pop Population, label int,target *linear.Seq, mutation_rate,indel_rate float64, model_file string) Member {
     seq1 := pop[rand.Intn(len(pop))] //pick a random Sequence
     seq2 := pop[rand.Intn(len(pop))] //pick another random Sequence
     newSequence := Member{seq:seq1.seq}
     newSequence.seq = newSequence.Crossover(seq2)
     newSequence.seq = newSequence.Mutate(mutation_rate,indel_rate)
-    newSequence.fitness = newSequence.ScoreFitness(target)
     newSequence.label = label
     return newSequence
 }
 // BreedNewGeneration() create a new population from previous best members and breeding new members from them
 // input: a population of sequences and how many you will pick (proportion is in (0,1)
 // output: new population of Sequences
-func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64, indel_rate float64, top_sequence_percent float64) Population {
+func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64, indel_rate float64, top_sequence_percent float64, model_file string) Population {
     nextGeneration := make(Population,len(generation))
     fittestMembers := GetFittestMembers(generation,top_sequence_percent)
     for i,member := range fittestMembers {
@@ -108,8 +105,9 @@ func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate
     }
     for i:=len(fittestMembers);i<len(nextGeneration);i++ {
         //breed new sequences untill our new generation is same size as previous
-        nextGeneration[i] = BreedSequence(fittestMembers,i,target,mutation_rate,indel_rate)
+        nextGeneration[i] = BreedSequence(fittestMembers,i,target,mutation_rate,indel_rate,model_file)
     }
+    nextGeneration.ScoreFitness(target, model_file)
     return nextGeneration
 }
 
@@ -144,11 +142,12 @@ func RunSimulation(lower int,
                    mutation_rate float64,
                    indel_rate float64,
                    top_sequence_percent float64,
+                   model_file string,
                    fitness_mode string,
                    fitness_plateau_tolerance float64,
                    plateau_gens int) Population {
     target := ReadTargetFromFasta(targetFile)
-    currentGen := InitializeGeneration(size,lower,upper,target)
+    currentGen := InitializeGeneration(size,lower,upper,target,model_file)
     bar := pb.StartNew(maxIterations).Prefix("Generations:")
     var generationFitnesses [][]float64 //list of fitness values for all solutions for each generation
     for gen := 0; gen < maxIterations; gen++ {//terminate regardless after maxIterations
@@ -161,7 +160,7 @@ func RunSimulation(lower int,
             fmt.Println("Reached Fitness Plateau at generation ",gen)
             return currentGen //if plateau, no improvements from continnuing simulation, finish
         }
-        currentGen = BreedNewGeneration(currentGen,target,mutation_rate,indel_rate,top_sequence_percent)
+        currentGen = BreedNewGeneration(currentGen,target,mutation_rate,indel_rate,top_sequence_percent,model_file)
         bar.Increment()
     }//never reached fitness plateau
     bar.Finish()
@@ -169,3 +168,38 @@ func RunSimulation(lower int,
     return currentGen
 }
 
+
+/*DEPRECIATED
+// BreedNewGeneration() create a new population from previous best members and breeding new members from them
+// input: a population of sequences and how many you will pick (proportion is in (0,1)
+// output: new population of Sequences
+func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64, indel_rate float64, top_sequence_percent float64) Population {
+    nextGeneration := make(Population,len(generation))
+    fittestMembers := GetFittestMembers(generation,top_sequence_percent)
+    for i,member := range fittestMembers {
+        member.label = i
+        nextGeneration[i] = Member{label:i,
+                                     fitness:member.fitness,
+                                     seq:member.seq,
+                                    }
+    }
+    chosen := len(fittestMembers)
+    toBreed := len(nextGeneration)-chosen
+    var wg sync.WaitGroup
+    wg.Add(toBreed)
+    ch := make(chan Member, 50)
+    for i:=0; i<toBreed; i++ {
+        //breed new sequences untill our new generation is same size as previous
+        go func(i int){
+            defer wg.Done()
+            for d := change ch {
+            }
+            bredSeq := BreedSequence(fittestMembers,i,target,mutation_rate,indel_rate)
+            nextGeneration[chosen+i] = bredSeq
+        }(i)
+    }
+    close(ch)
+    wg.Wait()
+    return nextGeneration
+}
+*/
