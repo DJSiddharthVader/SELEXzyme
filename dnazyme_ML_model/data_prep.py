@@ -1,7 +1,6 @@
 import os
 import sys
 import random
-import scipy.stats
 import pandas as pd
 from tqdm import tqdm
 from Bio import SeqIO
@@ -33,26 +32,19 @@ def GetGCContentDistribution(sequences):
     output: scipy.stats distribution object
     """
     sequences = [seq.upper() for seq in sequences]
-    distribution_list = [(seq.count('G')+seq.count('C'))/len(seq)
-                         for seq in sequences]
-    return scipy.stats.gaussian_kde(distribution_list)
+    return [(seq.count('G')+seq.count('C'))/len(seq) for seq in sequences]
 
 
-def MakeRandomSequence(length, gcContentProportion):
+def MakeRandomSequence(length, gcContent):
     """
     MakeRandomSequence() produces a random sequence of length L from
     input: length of sequence,  percent of bases that are G or C
     output: random sequence (each base is picked randomly but with constraints
     """
-    bases = []
-    for i in range(0, length):
-        gcProbability = random.uniform(0, 1)
-        if gcProbability < gcContentProportion:
-            base = random.choice(['G', 'C'])
-        else:
-            base = random.choice(['A', 'T'])
-        bases.append(base)
-    return ''.join(bases)
+    gc_prob = gcContent/2
+    at_prob = (1 - gc_prob)/2
+    base_probs = [at_prob, gc_prob, gc_prob, at_prob]
+    return ''.join(random.choices(DNA_ALPHABET, k=length, weights=base_probs))
 
 
 def MakeRandomSequenceDf(n, lower, upper, gcContentDistribution,
@@ -65,9 +57,8 @@ def MakeRandomSequenceDf(n, lower, upper, gcContentDistribution,
     output: pandas dataframe of random sequences
     """
     rows = []
-    for i in tqdm(range(n)):
+    for i, gc_content in tqdm(enumerate(gcContentDistribution)):
         length = random.choice(range(lower, upper))  # random length
-        gc_content = gcContentDistribution.resample(1)  # randomly sample GC%
         sequence = MakeRandomSequence(length, gc_content)
         row = {'GI': 'RSID_{}'.format(i),  # for pd.concat()
                'Identifier_Type': 'RSID',
@@ -137,8 +128,11 @@ def MakeData():
                            aptamer_df.shape[0],
                            promoter_df.shape[0]])
     gcDistribution = GetGCContentDistribution(dnazyme_df['Sequence'])
-    random_df = MakeRandomSequenceDf(int(total_sequences/3), 50, 300,
-                                     gcDistribution, 'Random', 'Not_DNAzyme')
+    minDNAzyme = min([len(x) for x in dnazyme_df.Sequence])
+    maxDNAzyme = max([len(x) for x in dnazyme_df.Sequence])
+    random_df = MakeRandomSequenceDf(int(total_sequences/3),
+                                     minDNAzyme, maxDNAzyme, gcDistribution,
+                                     'Random', 'Not_DNAzyme')
     # Combine all dataframes together
     all_df = pd.concat([dnazyme_df, aptamer_df, promoter_df, random_df])
     return all_df
@@ -151,3 +145,25 @@ if __name__ == '__main__':
         outfilepath = sys.argv[1]
     df = MakeData()
     df.to_csv(outfilepath,  sep='\t',  index=False)
+    """
+    df['GC'] = [(seq.count('G')+seq.count('C'))/len(seq)
+                for seq in df.Sequence]
+    print(df[df.Label == 'DNAzyme'][['Label', 'GC']].describe())
+    print(df[df.Label == 'Random'][['Label', 'GC']].describe())
+    """
+
+""" DEPRECIATED
+def MakeRandomSequence(length, gcContentProportion):
+    MakeRandomSequence() produces a random sequence of length L from
+    input: length of sequence,  percent of bases that are G or C
+    output: random sequence (each base is picked randomly but with constraints
+    bases = []
+    for i in range(0, length):
+        gcProbability = random.uniform(0, 1)
+        if gcProbability < gcContentProportion:
+            base = random.choice(['G', 'C'])
+        else:
+            base = random.choice(['A', 'T'])
+        bases.append(base)
+    return ''.join(bases)
+"""
