@@ -2,6 +2,7 @@ package main
 
 import(
     "os"
+    "io"
     "fmt"
     "sort"
     "math"
@@ -134,13 +135,45 @@ func ReadTargetFromFasta(fastafilename string) *linear.Seq {
     target.Alpha = ALPHABET
     return &target
 }
+// FastaToPopulation() reads a fasta file into a Population object
+// input: fasta file name
+// output: Population ([]Member)
+func FastaToPopulation(fastafilename string) Population {
+    fastaFile, err := os.Open(fastafilename)
+    if err != nil { panic(err) }
+    defer fastaFile.Close()
+
+    template := linear.NewSeq("",alphabet.Letters{},alphabet.DNA)
+    reader := fasta.NewReader(fastaFile,template)
+    var pop Population
+    for {
+        seq,err := reader.Read()
+        if err == io.EOF {
+            break
+        }
+        var sequence string //DNA sequence
+        for i:=0; i<seq.Len(); i++ {//add one letter at a time
+            sequence += strings.ToUpper(string(seq.At(i).L))
+        }
+        member := Member{seq:sequence,
+                         header:seq.CloneAnnotation().ID}
+        pop = append(pop,member)
+    }
+    return pop
+}
 // ConvertToSeqObject() converts a Member to a seq.Sequence (biogo object) for file writing
 // input: member object
 // output: biogo.linear.Seq object that can be writen easily
 func (s Member) ConvertToSeqObject() seq.Sequence {
-    label := fmt.Sprintf("Sequence_%v | Fitness:%v",s.label,s.fitness,)
+    var label string
+    if s.header == "" {
+        label = fmt.Sprintf("Sequence_%v | Fitness:%v",s.label,s.fitness,)
+    } else {
+        label = fmt.Sprintf("%v | Fitness:%v",s.header,s.fitness,)
+    }
     return linear.NewSeq(label,[]alphabet.Letter(s.seq),alphabet.DNA)
 }
+
 // WriteToFasta () write every member of the population into a fasta file
 // input: population, list of members
 func (pop Population) WriteToFasta(filename string) {

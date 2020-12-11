@@ -28,6 +28,7 @@ type Member struct {
     seq string
     fitness float64
     label int
+    header string
 }
 type Population []Member
 //for getting alignment score from biogo

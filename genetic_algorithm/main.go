@@ -1,8 +1,10 @@
 package main
 
 import(
+    "os"
     "fmt"
     "flag"
+    "strings"
     "math/rand"
 )
 
@@ -86,6 +88,7 @@ func main() {
     // minimum_hairpin_length := flag.Int("hairpin_len",4,"minimum size for a sequence to be considered pallindromic")
 
     //Termination Params
+    eval := flag.String("eval","","Only evaluates the fitness of sequences in fasta passed")
     fitness_plateau_mode := flag.String("plateau","cov_mean","criteria for deciding on fitness plateau, one of {cov_mean|cov}")
     fitness_plateau_tolerance := flag.Float64("plateau_tol",0.005,"maximum CoV of previous generations of fitness when deciding on plateau")
     fitness_plateau_generations := flag.Int("plateau_gens",5,"number of generations to consider for evaluating fitness plateau")
@@ -104,6 +107,15 @@ func main() {
                 *outputfile)
 
     //Run simulation
+    if len(*eval) != 0 { //only evaluate fitness of input fasta
+        pop := FastaToPopulation(*eval)
+        target := ReadTargetFromFasta(*targetFastaFile)
+        pop.ScoreFitness(target, *model_file)
+        outfile := fmt.Sprintf("%s_fitness.fna",strings.Replace(*eval,".fna","",-1))
+        pop.WriteToFasta(outfile)
+        fmt.Println("Scored file written to ",outfile)
+        os.Exit(0) //exit without simulating
+    }
     lastGen := RunSimulation(*lower,
                              *upper,
                              *size,
