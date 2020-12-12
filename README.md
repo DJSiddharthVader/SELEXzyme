@@ -98,15 +98,15 @@ A environment.yml is included for installing python dependencies with conda
 The crux of a genetic algorithm is breeding a new population of solutions from a current population of solutions to increase the overall fitness.
 This way after a number of iterations we will have a much fitter population than the initial population.
 In our case a solution is an actual DNA string representing a DNAzyme that will specifically bind our user-specified target sequence.
-So given a population of solutions <img src="https://render.githubusercontent.com/render/math?math=P_i"> we first take the fittest members of the population <img src="https://render.githubusercontent.com/render/math?math=F \subset P_f\subset P_i"> (default top 20%) and use them to breed a new population <img src="https://render.githubusercontent.com/render/math?math=P_{i+1}">.
+So given a population of solutions <img src="https://render.githubusercontent.com/render/math?math=P_i"> we first take the fittest members of the population <img src="https://render.githubusercontent.com/render/math?math=F \subset P_i"> (default top 20%) and use them to breed a new population <img src="https://render.githubusercontent.com/render/math?math=P_{i%2B1}">.
 Breeding here essentially means crossover and mutate to create a new solution.
 So we randomly select two solutions <img src="https://render.githubusercontent.com/render/math?math=a,b \in F"> (with replacement)  and create a new solution
 
 <img src="https://render.githubusercontent.com/render/math?math=c = mutate(crossover(a,b))">
 
-We continue generating <img src="https://render.githubusercontent.com/render/math?math=c">'s until our new population is the same size as our current population (<img src="https://render.githubusercontent.com/render/math?math=|P_{i+1}| = |P_i|">)
+We continue generating <img src="https://render.githubusercontent.com/render/math?math=c">'s until our new population is the same size as our current population <img src="https://render.githubusercontent.com/render/math?math=|P_{i%2B1}| = |P_i|">
 
-<img src="https://render.githubusercontent.com/render/math?math=P_{i+1} = F \cup \{c_i \forall i=0; i < |P_i|-|F|; i++ \}">
+<img src="https://render.githubusercontent.com/render/math?math=P_{i%2B1} = F \cup \{c_i \forall i=0\ldots |P_i|-|F|\}">
 
 Note that <img src="https://render.githubusercontent.com/render/math?math=F"> is passed on to the new population as these are still our best solutions so far.
 
