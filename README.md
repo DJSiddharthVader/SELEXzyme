@@ -1,29 +1,30 @@
 SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 =============================================================================
 
-# Table of Contents
+[Demo](./Documents/demo.mp4)
 
-- [Project-Overview](#Project-Overview)
-- [Logistics](#Logistics)
+# Table of Contents
+- [Project Overview](#Project-Overview)
+- [Usage](#Usage)
   - [Installation](#Installation)
-  - [Usage](#Usage)
-  - [External-Dependencies](#External-Dependencies)
+  - [Commands](#Commands)
+  - [External Dependencies](#External-Dependencies)
     - [Python](#Python)
     - [Golang](#Golang)
-- [Genetic-Algorithm](#Genetic-Algorithm)
+- [Genetic Algorithm](#Genetic-Algorithm)
   - [Breeding](#Breeding)
     - [Crossover](#Crossover)
     - [Mutation](#Mutation)
   - [Halting](#Halting)
-  - [Fitness-Function](#Fitness-Function)
-    - [Complementarity-To-Target](#Complementarity-To-Target)
-    - [Catalytic-Activity](#Catalytic-Activity)
-- [Machine-Learning-DNAzyme-Classification-Model](#Machine-Learning-DNAzyme-Classification-Model)
-  - [Data-Collection](#Data-Collection)
+  - [Fitness Function](#Fitness-Function)
+    - [Complementarity To Target](#Complementarity-To-Target)
+    - [Catalytic Activity](#Catalytic-Activity)
+- [Machine Learning DNAzyme Classification-Model](#Machine-Learning-DNAzyme-Classification-Model)
+  - [Data Collection](#Data-Collection)
   - [Training](#Training/Algorithms)
-- [Empirical-Validation](#Empirical-Validation)
+- [Empirical Validation](#Empirical-Validation)
 
-## Project Overview
+# Project Overview
 This project implements a genetic algorithm to evolve a set of DNAzymes that will target a user-supplied DNA sequence for cleavage.
 It will generate a random pool of DNAzymes (DNA sequences) and breed (defined [here](#Breeding)) the best members to create a new pool of sequences.
 It will repeat until there is no significant fitness improvement or it reaches the specified maximum number of iterations
@@ -31,9 +32,9 @@ Here best is defined as those sequences that maximized our [fitness function](#f
 The final generation of DNAzymes represent the best DNAzymes the algorithm has seen over all generations.
 This generation will be written to a fasta or tsv file.
 
-## Logistics
+# Usage
 
-### Installation
+## Installation
 First you can clone and enter the git repository in your Golang Path
 ```
 git clone https://github.com/DJSiddharthVader/Project_02601 && cd Project_02601
@@ -41,8 +42,9 @@ git clone https://github.com/DJSiddharthVader/Project_02601 && cd Project_02601
 Next you can install the python dependencies with
 ```
 conda env create -f environment.yml
-conda activate prog02601
+conda activate selexzyme
 ```
+You also want to set the python path in the [fitness.go](https://github.com/DJSiddharthVader/Project_02601/blob/a41de1722939d9133786d7f24ecad820c12c4226/genetic_algorithm/fitness.go#L15) file so Golang knows where to find your python3 exe.
 Next you can install the Golang dependencies
 ```
 go get github.com/biogo/biogo
@@ -50,15 +52,16 @@ go get github.com/cheggaaa/pb
 ```
 Now you can build the program with
 ```
-cd genetic_algorithm && go build . && cd -
+cd genetic_algorithm && go build .
 ```
 now the executable can be used as
 ```
-./genetic_algorithm/genetic_algorithm -h
+./genetic_algorithm -h
 ```
+you must run from inside the `genetic_algorithm` directory.
 
-### Usage
-Running the program will be as follows
+## Commands
+You can refer to the [demo video](./Documents/demo.mp4) as well, running the program will be as follows
 
 ```
 ./genetic_algorithm/genetic_algorithm -target   $target.fna
@@ -81,26 +84,29 @@ The arguments are
 
 There are other adjustable parameters, run `../genetic_algorithm/genetic_algorithm -h` to see a list of all arguments and defaults.
 
-If you run `./genetic_algorithm -target ../data/examples/target.fna -output ../data/examples/dnazymes.fna -seed 9`
-then the file `dnazymes.fna` should be the same as `dnazymes_true.fna` with perhaps some rounding error in the fitness sequences.
+If you run
+```
+./genetic_algorithm/genetic_algorithm -target ./data/examples/target.fna -output ./data/examples/dnazymes.fna -seed 9
+```
+then the file `./data/examples/dnazymes.fna` should be identical to `./data/examples/dnazymes_true.fna` with perhaps some rounding error in the fitness values.
 The following should also be printed to console
 ```
-Reached Fitness Plateau at generation  17
+Reached Fitness Plateau at generation  19
 Final Generation Fitness Summary
 -------------------------------------
-Min.............. 0.10909090909090909
-25% Quart         0.2
-Mean............. 0.19843999999999726
-75% Quart         0.2
-Max.............. 0.2
-Std. Dev          0.008031621255876416
-CoV.............. 0.04047380193447152
+Min.............. 0.1
+25% Quart         0.46
+Mean............. 0.45211800094783916
+75% Quart         0.46
+Max.............. 0.46
+Std. Dev          0.04861923289688608
+CoV.............. 0.10753660061081106
 -------------------------------------
 ```
 
-### External Dependencies
+## External Dependencies
 
-#### Python
+### Python
 A environment.yml is included for installing python dependencies with conda
 - numpy      (useful for numeric transformation)
 - pandas     (data processing)
@@ -109,13 +115,13 @@ A environment.yml is included for installing python dependencies with conda
 - matplotlib (plotting)
 - seaborn    (plotting)
 
-#### Golang
+### Golang
 - github.com/biogo/biogo (for fasta utilities)
 - github.com/cheggaaa/pb (progress bar)
 
-## Genetic Algorithm
+# Genetic Algorithm
 
-### Breeding
+## Breeding
 The crux of a genetic algorithm is breeding a new population of solutions from a current population of solutions to increase the overall fitness.
 This way after a number of iterations we will have a much fitter population than the initial population.
 In our case a solution is an actual DNA string representing a DNAzyme that will specifically bind our user-specified target sequence.
@@ -131,7 +137,7 @@ We continue generating <img src="https://render.githubusercontent.com/render/mat
 
 Note that <img src="https://render.githubusercontent.com/render/math?math=F"> is passed on to the new population as these are still our best solutions so far.
 
-#### Crossover
+### Crossover
 Crossover is a key element of genetic algorithms.
 Crossover helps ensure that new solutions are created during each generation while retaining the best features from the current set of solutions.
 It is done by taking parts of two different solutions and gluing them together to form a new solution.
@@ -141,7 +147,7 @@ First we select a random index i and then merge two sequences as such
 taking the first part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_1"> and the second part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_2">.
 This will always result in a new <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3"> of length <img src="https://render.githubusercontent.com/render/math?math=\max(|\text{seq}_1|,|\text{seq}_2|)">.
 
-#### Mutation
+### Mutation
 Again mutation is implemented to introduce more variation into the solution population, specifically to avoid getting stuck in local optima.
 For mutation every base in a sequence is mutated with some probability <img src="https://render.githubusercontent.com/render/math?math=\mu"> (default 0.005).
 This is done to more closely mimic actual models of DNA mutation, as opposed to mutating a set percentage of bases for each sequence.
@@ -149,7 +155,7 @@ Further there is a chance (default 0.1) that a given mutation can result in an i
 In a deletion that base is deleted from the solution, in an insertion a new random base is added after the current base, which is left unchanged.
 Mutations must change the base to a new base, so you cannot have a <img src="https://render.githubusercontent.com/render/math?math=T \to T"> mutation.
 
-### Halting
+## Halting
 At some point the program must halt and cease to produce new generations of solutions.
 This is done in two cases; reaching the max number of iterations (default 500) or no increases in population fitness.
 This is an optimization algorithm so eventually it will reach a fitness optimum and no longer be able to improve its solutions.
@@ -158,13 +164,13 @@ Next we check if the coefficient of variation (std.dev / mean) of the previous <
 This means that the average fitness has not changed much in the past <img src="https://render.githubusercontent.com/render/math?math=g"> generations and thus further generations will not change the average fitness enough.
 This is the default option but you can also specify to just consider if the CoV of fitness from the current generation is below a threshold.
 
-### Fitness Function
+## Fitness Function
 The fitness function considers the "DNAzyme-ness" of a sequence and how similar it is to the complement of the target.
 Complementarity to the complement of the target measure how likely the DNAzyme will bind to the target.
 The "DNAzme-ness" evaluation is done with a machine learning model trained as a binary classifier for the labels "DNAzyme" and "Not DNAzyme" described [here](#machine-learning-dnazyme-classification-model).
 These are weighted (arbitrarily) as 0.4 weight for complementarity and 0.6 weight for DNAzyme-ness.
 
-#### Complementarity To Target
+### Complementarity To Target
 The complementarity to the target sequence is also considered when assessing sequence fitness, specifically
 
 <img src="https://render.githubusercontent.com/render/math?math=\frac{\text{Smith-Waterman}(\text{sequence},\text{target})}{|target|}">
@@ -176,19 +182,19 @@ This is the raw score, counting mismatches and gaps according to the scoring mat
 This score is then divided by the length of the target, ensuring that the maximum score is always 1, for a perfect matching sequence.
 Note we are measuring the normalized Smith-Waterman score to the complement of the target sequence because we want it to bind the target.
 
-#### Catalytic Activity
+### Catalytic Activity
 We use a machine learning model to estimate the "DNAzyme-ness" (general catalytic activity) of given DNA sequence, see [here](#machine-learning-dnazyme-classification-model)
 The actual value is the probability that the given sequence is a DNAzyme according to the ML model
 
-## Machine Learning DNAzyme Classification Model
+# Machine Learning DNAzyme Classification Model
 
-### Data Collection
+## Data Collection
 Data is required for training the machine learning model to asses how likely a given DNA sequence is a DNAzyme.
 There are relatively few known DNAzyme sequence so we also want to include negative examples, which include random DNA sequences and aptamer like sequences that can bind proteins but have no catalytic activity.
 Known DNAzymes, DNA Aptamers and promoters were downloaded from the [NCBI Nucleotide](https://www.ncbi.nlm.nih.gov/nuccore/), by searching for "DNAzyme","Aptamer" and "promoter" respectively and filtering for "genomic DNA/RNA".
 Promoters were constrained to be between 50-250 base pairs long to trim the results and more closely resemble Aptamers and DNAzymes
 Random sequences between 10-100bp with GC% matching the real DNAzymes were also generated as negative training examples.
-A tsv including all the sequences and labels is provided in `./data/All_sequences.csv`, which contains
+A tsv including all the sequences and labels is provided in `./data/All_sequences.tsv`, which contains
  - 9999 Aptamers
  - 5581 DNAzymes
  - 4537 Promoters
@@ -197,7 +203,7 @@ A tsv including all the sequences and labels is provided in `./data/All_sequence
 An example of the data is viewable [here](./data/example_training_data.tsv)
 (Note values the `Identifier_Type` column are described [here](https://en.wikipedia.org/wiki/FASTA_format#NCBI_identifiers).
 
-### Training
+## Training
 Based on a brief literature search it seems like Support Vector Machines (SVMs) are effective and reliable for DNA sequence classification.
 SVMs are also relatively simple (few parameters) and implemented effectively in packages like sklearn, making them relatively easy to use.
 Due to the amount of training data and my limited access to resources I could not actually use the sklearn SVM as it could not store the data in memory at once.
@@ -229,11 +235,11 @@ Actual
 After some further investigation of the training data it appears that the DNAzymes are generally much shorter than the negative examples, perhaps tricking the model to just use length as a proxy for DNAzyme-ness.
 ![Training data features](./Documents/images/sequence_features.png)
 Also the DNAzyme sequences were clustered, with sets from the same experiment designed to target the same gene.
-This artificially increased the similarity of the DNAzymes and put heavy importance on specific k-mers that were important for that experiment by not for generally DNAzyme-ness.
-This bias is compounded by how short the sequences were, creating a highly over-fit model
-At this point it appeared pointless to actually tune the hyperparameters due to how poor the DNAzyme data was so I simply saved the trained SGD model to a pickle file for use in the genetic algorithm.
+This artificially increased the similarity of the DNAzymes and put heavy importance on specific k-mers that were important for that experiment by not for general DNAzyme-ness.
+This bias is compounded by how short the sequences were and the very few sources of DNAzymes creating a highly over-fit model due to the artificial similarity of all the DNAzyme sequences.
+At this point it appeared pointless to actually tune the hyperparameters due to how poor the DNAzyme data and due to time/data constraints I abandoned any further development of the model and used what I had.
 
-## Empirical Validation
+# Empirical Validation
 Ideally this project would provide a computational alternative to how DNAzymes might normally be optimized involving techniques like SELEX.
 SELEX functions very well but it can be laborious and expensive and difficult to decide on some model parameters before starting.
 Using a computational method will save significant amounts of time and resources, as well as allowing researchers to more easily experiment with simulation parameters.
