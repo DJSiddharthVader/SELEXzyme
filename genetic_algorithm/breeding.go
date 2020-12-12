@@ -147,6 +147,8 @@ func RunSimulation(lower int,
                    fitness_plateau_tolerance float64,
                    plateau_gens int) Population {
     target := ReadTargetFromFasta(targetFile)
+    target.RevComp()
+    target.Reverse() //no complement method so do reverse(reverse complement
     currentGen := InitializeGeneration(size,lower,upper,target,model_file)
     bar := pb.StartNew(maxIterations).Prefix("Generations:")
     var generationFitnesses [][]float64 //list of fitness values for all solutions for each generation
