@@ -19,7 +19,7 @@ SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
   - [Fitness Function](#Fitness-Function)
     - [Complementarity To Target](#Complementarity-To-Target)
     - [Catalytic Activity](#Catalytic-Activity)
-- [Machine Learning DNAzyme Classification-Model](#Machine-Learning-DNAzyme-Classification-Model)
+- [DNAzyme Classification Model](#DNAzyme-Classification-Model)
   - [Data Collection](#Data-Collection)
   - [Training](#Training/Algorithms)
 - [Empirical Validation](#Empirical-Validation)
@@ -37,7 +37,7 @@ This generation will be written to a fasta or tsv file.
 ## Installation
 First you can clone and enter the git repository in your Golang Path
 ```
-git clone https://github.com/DJSiddharthVader/Project_02601 && cd Project_02601
+git clone https://github.com/DJSiddharthVader/SELEXzyme && cd SELEXzyme
 ```
 Next you can install the python dependencies with
 ```
@@ -58,10 +58,10 @@ now the executable can be used as
 ```
 ./genetic_algorithm -h
 ```
-you must run from inside the `genetic_algorithm` directory.
+you must run from inside the `./genetic_algorithm` directory.
 
 ## Commands
-You can refer to the [demo video](./demo.mp4) as well, running the program will be as follows
+You can refer to the [demo video](./demo.mp4) as well, running the program is
 
 ```
 ./genetic_algorithm -target   $target.fna
@@ -145,7 +145,6 @@ In this case our solutions are actual genetic sequences so the process is fairly
 First we select a random index i and then merge two sequences as such
 <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3 = \text{seq}_1[0:i] %2B \text{seq}_2[i:]">
 taking the first part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_1"> and the second part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_2">.
-This will always result in a new <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3"> of length <img src="https://render.githubusercontent.com/render/math?math=\max(|\text{seq}_1|,|\text{seq}_2|)">.
 
 ### Mutation
 Again mutation is implemented to introduce more variation into the solution population, specifically to avoid getting stuck in local optima.
@@ -157,7 +156,7 @@ Mutations must change the base to a new base, so you cannot have a <img src="htt
 
 ## Halting
 At some point the program must halt and cease to produce new generations of solutions.
-This is done in two cases; reaching the max number of iterations (default 500) or no increases in population fitness.
+This is done in two cases; reaching the max number of iterations (default 30) or no increases in population fitness.
 This is an optimization algorithm so eventually it will reach a fitness optimum and no longer be able to improve its solutions.
 To asses this we first calculate the average fitness of all solutions for each generation separately.
 Next we check if the coefficient of variation (std.dev / mean) of the previous <img src="https://render.githubusercontent.com/render/math?math=g"> generations (default 5) is less than some threshold <img src="https://render.githubusercontent.com/render/math?math=\theta"> (default 0.25)
@@ -166,7 +165,7 @@ This is the default option but you can also specify to just consider if the CoV 
 
 ## Fitness Function
 The fitness function considers the "DNAzyme-ness" of a sequence and how similar it is to the complement of the target.
-Complementarity to the complement of the target measure how likely the DNAzyme will bind to the target.
+Complementarity to the target measure how likely the DNAzyme will bind to the target.
 The "DNAzme-ness" evaluation is done with a machine learning model trained as a binary classifier for the labels "DNAzyme" and "Not DNAzyme" described [here](#machine-learning-dnazyme-classification-model).
 These are weighted (arbitrarily) as 0.4 weight for complementarity and 0.6 weight for DNAzyme-ness.
 
@@ -186,7 +185,7 @@ Note we are measuring the normalized Smith-Waterman score to the complement of t
 We use a machine learning model to estimate the "DNAzyme-ness" (general catalytic activity) of given DNA sequence, see [here](#machine-learning-dnazyme-classification-model)
 The actual value is the probability that the given sequence is a DNAzyme according to the ML model
 
-# Machine Learning DNAzyme Classification Model
+# DNAzyme Classification Model
 
 ## Data Collection
 Data is required for training the machine learning model to asses how likely a given DNA sequence is a DNAzyme.
