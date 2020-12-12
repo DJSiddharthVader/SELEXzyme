@@ -38,4 +38,5 @@ def main(fasta_file, model_file):
 if __name__ == '__main__':
     fasta_file = sys.argv[1]
     model_file = sys.argv[2]
-    print(main(fasta_file, model_file))
+    output = main(fasta_file, model_file)
+    print(' '.join(["%.9f" % x for x in output]))

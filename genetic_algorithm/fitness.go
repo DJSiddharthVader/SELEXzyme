@@ -9,46 +9,10 @@ import(
     "github.com/biogo/biogo/seq/linear"
 )
 
-const minimum_hairpin_length = 4
 const classifer_script = "../dnazyme_ML_model/dnazyme_classifier.py"
-const tmp_fasta = "./generation_tmp.fna"
-const python_exe = "/home/sidreed/anaconda3/envs/prog02601/bin/python"
+const tmp_fasta = "/tmp/generation_tmp.fna"
+const python_exe = "/home/sidreed/anaconda3/envs/selexzyme/bin/python3"
 
-// ReverseComplement() reverses a DNA string and takes the complement
-// output: string
-func (s Member) ReverseComplement() string {
-    var result string
-    for _,v := range s.seq {
-        result = string(DNA_COMPLEMENTS[v]) + result
-    }
-    return result
-}
-// HasHairpins() check if the sequence contains a palindrome that will cause hairpin binding in vivo
-// output: int, number of hairpins
-func (s Member) HasHairpins() int {
-    hairpins := 0
-    totalHalfwayPoint := int(len(s.seq)/2)
-    var halfwayPoint int
-    var firstHalf,secondHalfReverse string
-    for windowSize := minimum_hairpin_length; windowSize < totalHalfwayPoint; windowSize++ {
-        // check for pallendroms of length ranging from 2*minimumLength bp to half of the entire sequence
-        // 0.5 times length of the pallendrome
-        for windowStart := 0; windowStart <= len(s.seq)-windowSize; windowStart++{
-            // check every position if it is a pallendroms of length windowSize
-            halfwayPoint = windowStart+windowSize // halfway point of the potential pallendrome
-            firstHalf = s.seq[windowStart:halfwayPoint] // first half of the potential pallendrome
-            secondHalfReverse = s.ReverseComplement()
-            if firstHalf == secondHalfReverse[halfwayPoint:halfwayPoint+windowSize] {
-                // even length palindrome ACGG CCGT
-                hairpins += 1
-            } else if firstHalf == secondHalfReverse[halfwayPoint:halfwayPoint+windowSize+1] {
-                // odd length palindrome ACGG T CCGT
-                hairpins += 1
-            }
-        }
-    }
-    return hairpins
-}
 // Complementarity() returns BLAST score of sequence to target, higher is better for fitness
 // output: float64, local (SW) alignment score of the 2 sequences
 // thoguh target is an argument it will be constant through out the simulation
@@ -126,6 +90,41 @@ func (s Member) ScoreFitness(target *linear.Seq, model_file string) float64 {
     similarity := s.Complementarity(target)
     dnazymeness := s.CallDNAzymeModel(model_file)
     return (similarity*0.4+dnazymeness*0.6)/2
+}
+// ReverseComplement() reverses a DNA string and takes the complement
+// output: string
+func (s Member) ReverseComplement() string {
+    var result string
+    for _,v := range s.seq {
+        result = string(DNA_COMPLEMENTS[v]) + result
+    }
+    return result
+}
+// HasHairpins() check if the sequence contains a palindrome that will cause hairpin binding in vivo
+// output: int, number of hairpins
+func (s Member) HasHairpins() int {
+    hairpins := 0
+    totalHalfwayPoint := int(len(s.seq)/2)
+    var halfwayPoint int
+    var firstHalf,secondHalfReverse string
+    for windowSize := minimum_hairpin_length; windowSize < totalHalfwayPoint; windowSize++ {
+        // check for pallendroms of length ranging from 2*minimumLength bp to half of the entire sequence
+        // 0.5 times length of the pallendrome
+        for windowStart := 0; windowStart <= len(s.seq)-windowSize; windowStart++{
+            // check every position if it is a pallendroms of length windowSize
+            halfwayPoint = windowStart+windowSize // halfway point of the potential pallendrome
+            firstHalf = s.seq[windowStart:halfwayPoint] // first half of the potential pallendrome
+            secondHalfReverse = s.ReverseComplement()
+            if firstHalf == secondHalfReverse[halfwayPoint:halfwayPoint+windowSize] {
+                // even length palindrome ACGG CCGT
+                hairpins += 1
+            } else if firstHalf == secondHalfReverse[halfwayPoint:halfwayPoint+windowSize+1] {
+                // odd length palindrome ACGG T CCGT
+                hairpins += 1
+            }
+        }
+    }
+    return hairpins
 }
 */
 func newline() { fmt.Println() }
