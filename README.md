@@ -3,25 +3,25 @@ SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 
 # Table of Contents
 
-- [Project Overview](#Project Overview)
+- [Project-Overview](#Project-Overview)
 - [Logistics](#Logistics)
  - [Installation](#Installation)
  - [Usage](#Usage)
- - [External Dependencies](#External Dependencies)
+ - [External-Dependencies](#External-Dependencies)
   - [Python](#Python)
   - [Golang](#Golang)
-- [Genetic Algorithm](#Genetic Algorithm)
+- [Genetic-Algorithm](#Genetic-Algorithm)
  - [Breeding](#Breeding)
   - [Crossover](#Crossover)
   - [Mutation](#Mutation)
  - [Halting](#Halting)
- - [Fitness Function](#Fitness Function)
-  - [Complementarity To Target](#Complementarity To Target)
-  - [Catalytic Activity](#Catalytic Activity)
-- [Machine Learning DNAzyme Classification Model](#Machine Learning DNAzyme Classification Model)
- - [Data Collection](#Data Collection)
- - [Training/Algorithms](#Training/Algorithms)
-- [Empirical Validation](#Empirical Validation)
+ - [Fitness-Function](#Fitness-Function)
+  - [Complementarity-To-Target](#Complementarity-To-Target)
+  - [Catalytic-Activity](#Catalytic-Activity)
+- [Machine-Learning-DNAzyme-Classification-Model](#Machine-Learning-DNAzyme-Classification-Model)
+ - [Data-Collection](#Data-Collection)
+ - [Training](#Training/Algorithms)
+- [Empirical-Validation](#Empirical-Validation)
 
 ## Project Overview
 This project implements a genetic algorithm to evolve a set of DNAzymes that will target a user-supplied DNA sequence for cleavage.
@@ -197,7 +197,7 @@ A tsv including all the sequences and labels is provided in `./data/All_sequence
 An example of the data is viewable [here](./data/example_training_data.tsv)
 (Note values the `Identifier_Type` column are described [here](https://en.wikipedia.org/wiki/FASTA_format#NCBI_identifiers).
 
-### Training/Algorithms
+### Training
 Based on a brief literature search it seems like Support Vector Machines (SVMs) are effective and reliable for DNA sequence classification.
 SVMs are also relatively simple (few parameters) and implemented effectively in packages like sklearn, making them relatively easy to use.
 Due to the amount of training data and my limited access to resources I could not actually use the sklearn SVM as it could not store the data in memory at once.
