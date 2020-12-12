@@ -102,11 +102,11 @@ So given a population of solutions <img src="https://render.githubusercontent.co
 Breeding here essentially means crossover and mutate to create a new solution.
 So we randomly select two solutions <img src="https://render.githubusercontent.com/render/math?math=a,b \in F"> (with replacement)  and create a new solution
 
-<img src="https://render.githubusercontent.com/render/math?math=c = mutate(crossover(a,b))">
+<img src="https://render.githubusercontent.com/render/math?math=c=\text{mutate}(\text{crossover}(a,b))">
 
 We continue generating <img src="https://render.githubusercontent.com/render/math?math=c">'s until our new population is the same size as our current population <img src="https://render.githubusercontent.com/render/math?math=|P_{i%2B1}| = |P_i|">
 
-<img src="https://render.githubusercontent.com/render/math?math=P_{i%2B1} = F \cup \{c_i \forall i=0\ldots |P_i|-|F|\}">
+<img src="https://render.githubusercontent.com/render/math?math=P_{i%2B1} = F \cup \{c_i \forall i=0\ldots (|P_i|-|F|)\}">
 
 Note that <img src="https://render.githubusercontent.com/render/math?math=F"> is passed on to the new population as these are still our best solutions so far.
 
@@ -116,36 +116,38 @@ Crossover helps ensure that new solutions are created during each generation whi
 It is done by taking parts of two different solutions and gluing them together to form a new solution.
 In this case our solutions are actual genetic sequences so the process is fairly trivial.
 First we select a random index $i$ and then merge two sequences as such
-$$seq_3 = seq_1[0:i] + seq_2[i:]$$
-taking the first part of $seq_1$ and the second part of $seq_2$.
-This will always result in a new $seq_3$ of length $Max(len(seq_1,seq_2))$.
+<img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3 = \text{seq}_1[0:i] + \text{seq}_2[i:]">
+taking the first part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_1"> and the second part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_2">.
+This will always result in a new <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3"> of length <img src="https://render.githubusercontent.com/render/math?math=\max(|\text{seq}_1|,|\text{seq}_2|)">.
 
 #### Mutation
 Again mutation is implemented to introduce more variation into the solution population, specifically to avoid getting stuck in local optima.
-For mutation every base in a sequence is mutated with some probability $\mu$ (default 0.005).
+For mutation every base in a sequence is mutated with some probability <img src="https://render.githubusercontent.com/render/math?math=\mu"> (default 0.005).
 This is done to more closely mimic actual models of DNA mutation, as opposed to mutating a set percentage of bases for each sequence.
 Further there is a chance (default 0.1) that a given mutation can result in an insertion or deletion (each 0.5 probability).
 In a deletion that base is deleted from the solution, in an insertion a new random base is added after the current base, which is left unchanged.
-Mutations must change the base to a new base, so you cannot have a $T \to T$ mutation.
+Mutations must change the base to a new base, so you cannot have a <img src="https://render.githubusercontent.com/render/math?math=T \to T"> mutation.
 
 ### Halting
 At some point the program must halt and cease to produce new generations of solutions.
 This is done in two cases; reaching the max number of iterations (default 500) or no increases in population fitness.
 This is an optimization algorithm so eventually it will reach a fitness optimum and no longer be able to improve its solutions.
 To asses this we first calculate the average fitness of all solutions for each generation separately.
-Next we check if the coefficient of variation (std.dev / mean) of the previous $g$ generations (default 5) is less than some threshold $\theta$ (default 0.25)
-This means that the average fitness has not changed much in the past $g$ generations and thus further generations will not change the average fitness enough.
+Next we check if the coefficient of variation (std.dev / mean) of the previous <img src="https://render.githubusercontent.com/render/math?math=g"> generations (default 5) is less than some threshold <img src="https://render.githubusercontent.com/render/math?math=\theta"> (default 0.25)
+This means that the average fitness has not changed much in the past <img src="https://render.githubusercontent.com/render/math?math=g"> generations and thus further generations will not change the average fitness enough.
 This is the default option but you can also specify to just consider if the CoV of fitness from the current generation is below a threshold.
 
 ### Fitness Function
 The fitness function considers the "DNAzyme-ness" of a sequence and how similar it is to the complement of the target.
 Complementarity to the complement of the target measure how likely the DNAzyme will bind to the target.
 The "DNAzme-ness" evaluation is done with a machine learning model trained as a binary classifier for the labels "DNAzyme" and "Not DNAzyme" described [here](#machine-learning-dnazyme-classification-model).
-These are weighted (arbitrarily) as $0.4$ weight for complementarity and $0.6$ weight for DNAzyme-ness.
+These are weighted (arbitrarily) as 0.4 weight for complementarity and 0.6 weight for DNAzyme-ness.
 
 #### Complementarity To Target
 The complementarity to the target sequence is also considered when assessing sequence fitness, specifically
-$$\frac{Smith-Waterman(sequence,target)}{len(target)}$$
+
+<img src="https://render.githubusercontent.com/render/math?math=\frac{Smith-Waterman(sequence,target)}{len(target)}">
+
 is what is calculated.
 The Smith-Waterman local alignment score is calculated between the current DNAzyme and the target sequence.
 We use Smith-Waterman because only part of the DNAzyme needs to match the target and the DNAzymes are likely larger than the target regions.
@@ -184,12 +186,12 @@ The code for training the SGD is in the ipython notebook [here](./dnazyme_ML_mod
 
 First the string sequences must be transformed into numeric vectors for training.
 So each DNAzyme is split into a bag of k-mers (k=6, chosen arbitrarily) and then into a frequency vector of k-mers.
-Since $k=6$ there are $4^6=4096$ unique 6-mers so our frequency vector for a sequence is of length $4096$ where the value in each element is the number of occurrences of that specific 6-mer divided by the total number of 6-mers in the sequence.
+Since k=6 there are <img src="https://render.githubusercontent.com/render/math?math=4^6=4096"> unique 6-mers so our frequency vector for a sequence is of length 4096 where the value in each element is the number of occurrences of that specific 6-mer divided by the total number of 6-mers in the sequence.
 You can essentially think of it as a 6-mer frequency table for the sequence.
-The labels for each sequence are binary so $0$ if the sequence is not a DNAzyme and $1$ if it is.
+The labels for each sequence are binary so 0 if the sequence is not a DNAzyme and 1 if it is.
 So the 6-mer frequency table and label for each sequence is our training data.
 
-The training set was $70\%$ of the data, the test set was $15\%$ of the data (for hyperparameter tuning) and the validation set was $10\%$ of the data, reserved for a final validation once the hyperparameters were tuned.
+The training set was 70% of the data, the test set was 15% of the data (for hyperparameter tuning) and the validation set was 10% of the data, reserved for a final validation once the hyperparameters were tuned.
 This split was decided to try and reduce over-fitting, that the model will generalize to new sequences not in the training data.
 Unfortunately the model was grossly over-fit to the data resulting in the following scores on the test set without any tuning
 ```
@@ -225,6 +227,6 @@ So if my program works well it should ideally
 So the fitness rankings of the Abdelgany DNAzymes should be similar based on their assay results and my fitness function.
 It is also possible that my program outputs no DNAzymes similar to the Abdelgany ones but is still effective.
 
-The sequence for their DNAzyme target, AchR $\alpha$-subunit, was obtained from NCBI Gene [here](https://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&GO=MainBrowse&DATA=CCDS2261.1).
+The sequence for their DNAzyme target, AchR <img src="https://render.githubusercontent.com/render/math?math=\alpha">-subunit, was obtained from NCBI Gene [here](https://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&GO=MainBrowse&DATA=CCDS2261.1).
 The DNAzymes were taken from Table 1 from the Abdelgany paper (note show the targeted RNA sequence so I take the complement DNA for fitness evaluation).
 Also they do not provide comprehensive data for the clevage efficiencies.
