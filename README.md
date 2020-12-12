@@ -115,8 +115,8 @@ Crossover is a key element of genetic algorithms.
 Crossover helps ensure that new solutions are created during each generation while retaining the best features from the current set of solutions.
 It is done by taking parts of two different solutions and gluing them together to form a new solution.
 In this case our solutions are actual genetic sequences so the process is fairly trivial.
-First we select a random index $i$ and then merge two sequences as such
-<img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3 = \text{seq}_1[0:i] + \text{seq}_2[i:]">
+First we select a random index i and then merge two sequences as such
+<img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3 = \text{seq}_1[0:i] %2B \text{seq}_2[i:]">
 taking the first part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_1"> and the second part of <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_2">.
 This will always result in a new <img src="https://render.githubusercontent.com/render/math?math=\text{seq}_3"> of length <img src="https://render.githubusercontent.com/render/math?math=\max(|\text{seq}_1|,|\text{seq}_2|)">.
 
@@ -146,7 +146,7 @@ These are weighted (arbitrarily) as 0.4 weight for complementarity and 0.6 weigh
 #### Complementarity To Target
 The complementarity to the target sequence is also considered when assessing sequence fitness, specifically
 
-<img src="https://render.githubusercontent.com/render/math?math=\frac{Smith-Waterman(sequence,target)}{len(target)}">
+<img src="https://render.githubusercontent.com/render/math?math=\frac{\text{Smith-Waterman}(\text{sequence},\text{target})}{|target|}">
 
 is what is calculated.
 The Smith-Waterman local alignment score is calculated between the current DNAzyme and the target sequence.
@@ -167,7 +167,7 @@ There are relatively few known DNAzyme sequence so we also want to include negat
 Known DNAzymes, DNA Aptamers and promoters were downloaded from the [NCBI Nucleotide](https://www.ncbi.nlm.nih.gov/nuccore/), by searching for "DNAzyme","Aptamer" and "promoter" respectively and filtering for "genomic DNA/RNA".
 Promoters were constrained to be between 50-250 base pairs long to trim the results and more closely resemble Aptamers and DNAzymes
 Random sequences between 10-100bp with GC% matching the real DNAzymes were also generated as negative training examples.
-A tsv including all the sequences and labels is provided in `./data/all_sequences.csv`, which contains
+A tsv including all the sequences and labels is provided in `./data/All_sequences.csv`, which contains
  - 9999 Aptamers
  - 5581 DNAzymes
  - 4537 Promoters
@@ -206,7 +206,7 @@ Actual
 1            18  613
 ```
 After some further investigation of the training data it appears that the DNAzymes are generally much shorter than the negative examples, perhaps tricking the model to just use length as a proxy for DNAzyme-ness.
-[![Training data features]](./Documents/images/sequence_features.png)
+![Training data features](./Documents/images/sequence_features.png)
 Also the DNAzyme sequences were clustered, with sets from the same experiment designed to target the same gene.
 This artificially increased the similarity of the DNAzymes and put heavy importance on specific k-mers that were important for that experiment by not for generally DNAzyme-ness.
 This bias is compounded by how short the sequences were, creating a highly over-fit model
