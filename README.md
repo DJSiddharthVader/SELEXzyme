@@ -1,7 +1,7 @@
 SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 =============================================================================
 
-[Demo](./Documents/demo.mp4)
+[Demo](./demo.mp4)
 
 # Table of Contents
 - [Project Overview](#Project-Overview)
@@ -61,7 +61,7 @@ now the executable can be used as
 you must run from inside the `genetic_algorithm` directory.
 
 ## Commands
-You can refer to the [demo video](./Documents/demo.mp4) as well, running the program will be as follows
+You can refer to the [demo video](./demo.mp4) as well, running the program will be as follows
 
 ```
 ./genetic_algorithm -target   $target.fna
@@ -86,9 +86,9 @@ There are other adjustable parameters, run `./genetic_algorithm -h` to see a lis
 
 If you run
 ```
-./genetic_algorithm/genetic_algorithm -target ./data/examples/target.fna -output ./data/examples/dnazymes.fna -seed 9
+./genetic_algorithm -target ../data/examples/target.fna -output ../data/examples/dnazymes.fna -seed 9
 ```
-then the file `./data/examples/dnazymes.fna` should be identical to `./data/examples/dnazymes_true.fna` with perhaps some rounding error in the fitness values.
+then the file `./data/examples/dnazymes.fna` should be identical to `./data/examples/dnazymes_true.fna`.
 The following should also be printed to console
 ```
 Reached Fitness Plateau at generation  19
@@ -252,8 +252,59 @@ So if my program works well it should ideally
 - score the fitness of the Abdelgany et al. DNAzymes similarly to their assay results
 
 So the fitness rankings of the Abdelgany DNAzymes should be similar based on their assay results and my fitness function.
-It is also possible that my program outputs no DNAzymes similar to the Abdelgany ones but is still effective.
+It is also possible that my program outputs no DNAzymes similar to the Abdelgany ones but still effective DNAzymes
 
-The sequence for their DNAzyme target, AchR <img src="https://render.githubusercontent.com/render/math?math=\alpha">-subunit, was obtained from NCBI Gene [here](https://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&GO=MainBrowse&DATA=CCDS2261.1).
 The DNAzymes were taken from Table 1 from the Abdelgany paper (note, they show the targeted RNA sequence so I take the complement DNA for fitness evaluation).
-Also they do not provide comprehensive data for the cleavage efficiencies.
+The sequence for their DNAzyme target, AchR <img src="https://render.githubusercontent.com/render/math?math=\alpha">-subunit, was obtained from NCBI Gene [here](https://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&GO=MainBrowse&DATA=CCDS2261.1).
+
+The authors do not provide comprehensive fitness data, the most reliable fitness information they provided was that the DNAzymes followed a clear hierarchy of cleavage efficiency depending on the cleavage site (e.g. GT for 463GT(10+10)) which is <img src="https://render.githubusercontent.com/render/math?math=GT\leq AT> GC >>> AC">.
+
+We can rank the DNAzymes by fitness determined by my program and see if they follow this pattern.
+
+Using my model and the target gene cRNA my program calculated the following fitness values
+DNAzyme | Fitness
+--------|--------
+463GT(10+10) | 0.2
+463GT(13+9) | 0.2
+463GT(9+13) | 0.2
+472AT(10+10) | 0.18095238095238098
+472AT(13+9) | 0.1826086956521739
+472AT(9+13) | 0.1826086956521739
+476AC(10+10) | 0.19047619047619047
+685AC(13+9) | 0.16521739130434784
+694GT(13+9) | 0.2
+696AT(13+9) | 0.2
+765GT(13+9) | 0.2
+765GT(9+13) | 0.2
+799AC(13+9) | 0.18517395695217392
+801GT(13+9) | 0.1826086956521739
+801GT(9+13) | 0.1826086956521739
+805AT(13+9) | 0.1826086956521739
+808GC(13+9) | 0.1826086956521739
+811GT(10+10) | 0.18095238095238098
+811GT(13+9) | 0.1826086956521739
+811GT(9+13) | 0.1826086956521739
+811GT(13+13) | 0.1851851851851852
+
+So based on these fitness values they do seem to conform to our hierarchy with the exceptions of 696AT(13+9), 476AC(10+10), 799AC(13+9) which are considered more fit than they should be.
+Based on how overfit the DNAzyme model was this was somewhat surprising but is still not a particularly impressive result.
+
+
+The full set of evolved DNAzymes from my program are [here](./data/validation/my_dnazymes.fna) but this is the fitness summary, all default parameters except `-lower 15` were used.
+```
+Reached Fitness Plateau at generation  29
+Final Generation Fitness Summary
+-------------------------------------
+Min.............. 0.15789473684210528
+25% Quart         0.4789473684210526
+Mean............. 0.4690277651388846
+75% Quart         0.4789473684210526
+Max.............. 0.4789473684210526
+Std. Dev          0.04608867794884832
+CoV.............. 0.09826428491968045
+-------------------------------------
+```
+Qualitatively my DNAzymes are generally about half the length of the Abdelgany DNAzymes and contain much fewer C's, so they do appear to be fairly distinct.
+Since these researchers have _in vivo_ validation for their DNAzymes it appears that my model is not particularly effective, especially since it is biasing to make sequences as short as possible due to how the DNAzyme model was trained.
+However after increasing the lower bound from 10 to 15 results in a DNAzyme pool that look more similar to the Abdelgany DNAzymes and with a similar fitness distribution.
+There is also larger redundancy in the final output as many of the sequences (the most fit) are identical and have identical fitness values.
