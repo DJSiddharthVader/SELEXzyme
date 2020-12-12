@@ -1,9 +1,10 @@
 SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 =============================================================================
+<img src="https://render.githubusercontent.com/render/math?math=
 
 ## Project Overview
 This project implements a genetic algorithm to evolve a set of DNAzymes that will target a user-supplied DNA sequence for cleavage.
-It will generate a random pool of DNAzymes (DNA sequences) and breed (defined [here](#Breeding) the best members to create a new pool of sequences.
+It will generate a random pool of DNAzymes (DNA sequences) and breed (defined [here](#Breeding)) the best members to create a new pool of sequences.
 It will repeat until there is no significant fitness improvement or it reaches the specified maximum number of iterations
 Here best is defined as those sequences that maximized our [fitness function](#fitness-function).
 The final generation of DNAzymes represent the best DNAzymes the algorithm has seen over all generations.
@@ -13,17 +14,27 @@ This generation will be written to a fasta or tsv file.
 
 ### Installation
 First you can clone and enter the git repository in your Golang Path
-`git clone https://github.com/DJSiddharthVader/Project_02601 && cd Project_02601`
+```
+git clone https://github.com/DJSiddharthVader/Project_02601 && cd Project_02601
+```
 Next you can install the python dependencies with
-`conda env create -f environment.yml
-conda activate prog02601 `
+```
+conda env create -f environment.yml
+conda activate prog02601
+```
 Next you can install the Golang dependencies
-`go get github.com/biogo/biogo
-go get github.com/cheggaaa/pb`
+```
+go get github.com/biogo/biogo
+go get github.com/cheggaaa/pb
+```
 Now you can build the program with
-`cd genetic_algorithm && go build . && cd -`
+```
+cd genetic_algorithm && go build . && cd -
+```
 now the executable can be used as
-`./genetic_algorithm/genetic_algorithm -h`
+```
+./genetic_algorithm/genetic_algorithm -h
+```
 
 ### Usage
 Running the program will be as follows
@@ -87,13 +98,17 @@ A environment.yml is included for installing python dependencies with conda
 The crux of a genetic algorithm is breeding a new population of solutions from a current population of solutions to increase the overall fitness.
 This way after a number of iterations we will have a much fitter population than the initial population.
 In our case a solution is an actual DNA string representing a DNAzyme that will specifically bind our user-specified target sequence.
-So given a population of solutions $P_i$ we first take the fittest members of the population $F \subset P_i$ (default top 20%) and use them to breed a new population $P_{i+1}$.
+So given a population of solutions <img src="https://render.githubusercontent.com/render/math?math=P_a">i we first take the fittest members of the population <img src="https://render.githubusercontent.com/render/math?math=F \subset P_i"> (default top 20%) and use them to breed a new population <img src="https://render.githubusercontent.com/render/math?math=P_{i+1}">.
 Breeding here essentially means crossover and mutate to create a new solution.
-So we randomly select two solutions $a,b \in F$ (with replacement)  and create a new solution
-$$c = mutate(crossover(a,b))$$
-We continue generating $c$'s until our new population is the same size as our current population ($|P_{i+1}| = |P_i|$)
-$$P_{i+1} = F \cup \{c_i \forall i=0; i < |P_i|-|F|; i++ \}$$
-Note that $F$ is passed on to the new population as these are still our best solutions so far.
+So we randomly select two solutions <img src="https://render.githubusercontent.com/render/math?math=a,b \in F"> (with replacement)  and create a new solution
+
+<img src="https://render.githubusercontent.com/render/math?math=c = mutate(crossover(a,b))">
+
+We continue generating <img src="https://render.githubusercontent.com/render/math?math=c">'s until our new population is the same size as our current population (<img src="https://render.githubusercontent.com/render/math?math=|P_{i+1}| = |P_i|">)
+
+<img src="https://render.githubusercontent.com/render/math?math=">P_{i+1} = F \cup \{c_i \forall i=0; i < |P_i|-|F|; i++ \}
+
+Note that <img src="https://render.githubusercontent.com/render/math?math=F"> is passed on to the new population as these are still our best solutions so far.
 
 #### Crossover
 Crossover is a key element of genetic algorithms.
@@ -189,7 +204,7 @@ Actual
 1            18  613
 ```
 After some further investigation of the training data it appears that the DNAzymes are generally much shorter than the negative examples, perhaps tricking the model to just use length as a proxy for DNAzyme-ness.
-[![Training data features](./Documents/images/sequence_features.png)
+[![Training data features]](./Documents/images/sequence_features.png)
 Also the DNAzyme sequences were clustered, with sets from the same experiment designed to target the same gene.
 This artificially increased the similarity of the DNAzymes and put heavy importance on specific k-mers that were important for that experiment by not for generally DNAzyme-ness.
 This bias is compounded by how short the sequences were, creating a highly over-fit model
@@ -206,6 +221,7 @@ They did not preform SELEX but they did preform an assay testing the cleavage ef
 So if my program works well it should ideally
 - output some DNAzymes similar to the best ones Abdelgany et al. identified
 - score the fitness of the Abdelgany et al. DNAzymes similarly to their assay results
+
 So the fitness rankings of the Abdelgany DNAzymes should be similar based on their assay results and my fitness function.
 It is also possible that my program outputs no DNAzymes similar to the Abdelgany ones but is still effective.
 
