@@ -64,10 +64,10 @@ you must run from inside the `genetic_algorithm` directory.
 You can refer to the [demo video](./Documents/demo.mp4) as well, running the program will be as follows
 
 ```
-./genetic_algorithm/genetic_algorithm -target   $target.fna
-                                      -model    $model.pickle
-                                      -output   $output.fna
-                                      -maxIters $num_gens
+./genetic_algorithm -target   $target.fna
+                    -model    $model.pickle
+                    -output   $output.fna
+                    -maxIters $num_gens
 ```
 
 The arguments are
@@ -82,7 +82,7 @@ The arguments are
      - __fitness:__ total fitness score as described [here](#fitness-function)
  - `$num_gens` maximum number of generations to simulate if fitness does not plateau before
 
-There are other adjustable parameters, run `../genetic_algorithm/genetic_algorithm -h` to see a list of all arguments and defaults.
+There are other adjustable parameters, run `./genetic_algorithm -h` to see a list of all arguments and defaults.
 
 If you run
 ```
