@@ -71,7 +71,6 @@ func CheckParams(lower int,
 }
 
 func main() {
-    rand.Seed(9) //for testing
     //Parse Arguments
     //Initialization Params
     lower := flag.Int("lower",10,"minimum length of initial sequences")
@@ -79,6 +78,7 @@ func main() {
     size := flag.Int("size",1000,"number of sequences in the populations")
     maxIterations := flag.Int("maxIters",30,"max generations to simulate")
     targetFastaFile := flag.String("target","target.fna","target sequence for generated dnazymes to catalyze")
+    seed := flag.Int64("seed",0,"random seed, only set explicitly if specified")
 
     //Simulation params
     mutation_rate := flag.Float64("mutation",0.005,"mutation rate for sequences, in [0,1]")
@@ -94,6 +94,9 @@ func main() {
     fitness_plateau_generations := flag.Int("plateau_gens",5,"number of generations to consider for evaluating fitness plateau")
     outputfile := flag.String("output","dnazymes.fna","output file name for final set of dnazymes, must have extension {.tsv|.fna}")
 
+    if *seed != 0 {
+        rand.Seed(*seed) //for testing
+    }
     flag.Parse()
     CheckParams(*lower,
                 *upper,
