@@ -1,6 +1,27 @@
 SELEXzyme: Generating DNAzymes for Target Sequences using a Genetic Algorithm
 =============================================================================
-<img src="https://render.githubusercontent.com/render/math?math=
+
+# Table of Contents
+
+- [Project Overview](#Project Overview)
+- [Logistics](#Logistics)
+ - [Installation](#Installation)
+ - [Usage](#Usage)
+ - [External Dependencies](#External Dependencies)
+  - [Python](#Python)
+  - [Golang](#Golang)
+- [Genetic Algorithm](#Genetic Algorithm)
+ - [Breeding](#Breeding)
+  - [Crossover](#Crossover)
+  - [Mutation](#Mutation)
+ - [Halting](#Halting)
+ - [Fitness Function](#Fitness Function)
+  - [Complementarity To Target](#Complementarity To Target)
+  - [Catalytic Activity](#Catalytic Activity)
+- [Machine Learning DNAzyme Classification Model](#Machine Learning DNAzyme Classification Model)
+ - [Data Collection](#Data Collection)
+ - [Training/Algorithms](#Training/Algorithms)
+- [Empirical Validation](#Empirical Validation)
 
 ## Project Overview
 This project implements a genetic algorithm to evolve a set of DNAzymes that will target a user-supplied DNA sequence for cleavage.
@@ -218,7 +239,7 @@ SELEX functions very well but it can be laborious and expensive and difficult to
 Using a computational method will save significant amounts of time and resources, as well as allowing researchers to more easily experiment with simulation parameters.
 So if a researcher can approximate a SELEX result with a simulated result that would be very beneficial and open up the use of DNAzymes (or potentially DNA Aptamers) for more research applications.
 
-In order to do this I want to compare the output of SELEXzyme to that of a set of DNAzymes evolved _in vitro_ as done by the reseachers Abdelgany et al. in their paper [Design of efficient DNAzymes against muscle AChR alpha-subunit cRNA in vitro and in HEK 293 cells](https://pubmed.ncbi.nlm.nih.gov/19771209/)
+In order to do this I want to compare the output of SELEXzyme to that of a set of DNAzymes evolved _in vitro_ as done by the researchers Abdelgany et al. in their paper [Design of efficient DNAzymes against muscle AChR alpha-subunit cRNA in vitro and in HEK 293 cells](https://pubmed.ncbi.nlm.nih.gov/19771209/)
 They did not preform SELEX but they did preform an assay testing the cleavage efficiency of thier DNAzymes to select the most effective ones.
 So if my program works well it should ideally
 - output some DNAzymes similar to the best ones Abdelgany et al. identified
@@ -228,5 +249,5 @@ So the fitness rankings of the Abdelgany DNAzymes should be similar based on the
 It is also possible that my program outputs no DNAzymes similar to the Abdelgany ones but is still effective.
 
 The sequence for their DNAzyme target, AchR <img src="https://render.githubusercontent.com/render/math?math=\alpha">-subunit, was obtained from NCBI Gene [here](https://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&GO=MainBrowse&DATA=CCDS2261.1).
-The DNAzymes were taken from Table 1 from the Abdelgany paper (note show the targeted RNA sequence so I take the complement DNA for fitness evaluation).
-Also they do not provide comprehensive data for the clevage efficiencies.
+The DNAzymes were taken from Table 1 from the Abdelgany paper (note, they show the targeted RNA sequence so I take the complement DNA for fitness evaluation).
+Also they do not provide comprehensive data for the cleavage efficiencies.
