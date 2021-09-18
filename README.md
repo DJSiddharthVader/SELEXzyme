@@ -261,6 +261,7 @@ The authors do not provide comprehensive fitness data, the most reliable fitness
 We can rank the DNAzymes by fitness determined by my program and see if they follow this pattern.
 
 Using my model and the target gene cRNA my program calculated the following fitness values
+
 DNAzyme | Fitness
 --------|--------
 463GT(10+10) | 0.2
