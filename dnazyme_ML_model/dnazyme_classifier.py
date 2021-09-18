@@ -9,6 +9,10 @@ VECTORIZER = HashingVectorizer(n_features=n_features)  # for str to kmer hash
 
 
 def fasta_to_list(fasta_file):
+    """ Convert a fasta file into a list of string objects
+        input: fasta file name
+        output: list of strings, 1 per fasta entry
+    """
     return [str(rec.seq) for rec in SeqIO.parse(fasta_file, "fasta")]
 
 
