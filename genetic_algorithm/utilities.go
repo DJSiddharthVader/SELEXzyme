@@ -220,6 +220,3 @@ func (pop Population) WriteResults(filename string) {
             panic(fmt.Sprintf("Invalid outfile format, must be {fna|tsv}"))
     }
 }
-
-/*
-*/

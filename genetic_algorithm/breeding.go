@@ -169,39 +169,3 @@ func RunSimulation(lower int,
     fmt.Println("Reached Max Iterations ",maxIterations)
     return currentGen
 }
-
-
-/*DEPRECIATED
-// BreedNewGeneration() create a new population from previous best members and breeding new members from them
-// input: a population of sequences and how many you will pick (proportion is in (0,1)
-// output: new population of Sequences
-func BreedNewGeneration(generation Population, target *linear.Seq, mutation_rate float64, indel_rate float64, top_sequence_percent float64) Population {
-    nextGeneration := make(Population,len(generation))
-    fittestMembers := GetFittestMembers(generation,top_sequence_percent)
-    for i,member := range fittestMembers {
-        member.label = i
-        nextGeneration[i] = Member{label:i,
-                                     fitness:member.fitness,
-                                     seq:member.seq,
-                                    }
-    }
-    chosen := len(fittestMembers)
-    toBreed := len(nextGeneration)-chosen
-    var wg sync.WaitGroup
-    wg.Add(toBreed)
-    ch := make(chan Member, 50)
-    for i:=0; i<toBreed; i++ {
-        //breed new sequences untill our new generation is same size as previous
-        go func(i int){
-            defer wg.Done()
-            for d := change ch {
-            }
-            bredSeq := BreedSequence(fittestMembers,i,target,mutation_rate,indel_rate)
-            nextGeneration[chosen+i] = bredSeq
-        }(i)
-    }
-    close(ch)
-    wg.Wait()
-    return nextGeneration
-}
-*/
